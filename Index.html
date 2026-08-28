@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="DexFans — discover creators, connect, and experience content your way."
+  >
+  <meta name="theme-color" content="#050505">
+  <title>DexFans — The Creator Network</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="casino.css">
+  <style>
+    /* Creator image cards */
+    .creator-image {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+    }
+    .creator-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .creator-card:hover .creator-image img {
+      transform: scale(1.05);
+    }
+    .creator-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,.65),
+        transparent 55%
+      );
+      pointer-events: none;
+    }
+    .online {
+      position: absolute;
+      z-index: 2;
+      top: 12px;
+      left: 12px;
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .7px;
+    }
+    .online.live {
+      background: rgba(225,25,65,.95);
+    }
+    .creator-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      color: #888;
+      font-size: 12px;
+    }
+    .creator-flag {
+      font-size: 16px;
+    }
+    .creator-info {
+      position: relative;
+    }
+    .creator-info h3 {
+      margin-bottom: 3px;
+    }
+    .creator-info p {
+      margin: 0;
+    }
+    .followers {
+      white-space: nowrap;
+    }
+    /* Live panel */
+    .live-user-location {
+      display: block;
+      margin-top: 3px;
+      color: #777;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <!-- BACKGROUND -->
+  <div class="background">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="grid"></div>
+  </div>
+  <!-- NAVIGATION -->
+  <header class="navbar">
+    <a href="/" class="logo">
+      <span class="logo-mark">D</span>
+      <span>DexFans</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#discover">Discover</a>
+      <a href="#live">Live</a>
+      <a href="#creators">Creators</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="nav-actions">
+      <button
+        class="ghost-button"
+        onclick="showMessage('Login coming soon')"
+      >
+        Log in
+      </button>
+      <button
+        class="primary-button"
+        onclick="showMessage('Sign up coming soon')"
+      >
+        Join DexFans
+      </button>
+    </div>
+    <button
+      class="mobile-menu"
+      onclick="toggleMenu()"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+  </header>
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#discover" onclick="toggleMenu()">Discover</a>
+    <a href="#live" onclick="toggleMenu()">Live</a>
+    <a href="#creators" onclick="toggleMenu()">Creators</a>
+    <a href="#about" onclick="toggleMenu()">About</a>
+    <button
+      class="primary-button mobile-join"
+      onclick="showMessage('Sign up coming soon')"
+    >
+      Join DexFans
+    </button>
+  </div>
+  <!-- HERO -->
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="pulse"></span>
+          The creator network
+        </div>
+        <h1>
+          Your world.
+          <span>Your creators.</span>
+        </h1>
+        <p class="hero-text">
+          Discover creators, connect directly and experience
+          a new generation of digital content.
+        </p>
+        <div class="hero-buttons">
+          <button
+            class="primary-button large"
+            onclick="scrollToSection('discover')"
+          >
+            Explore creators
+            <span>→</span>
+          </button>
+          <button
+            class="secondary-button large"
+            onclick="showMessage('Creator registration coming soon')"
+          >
+            Become a creator
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <strong>24/7</strong>
+            <span>Creator activity</span>
+          </div>
+          <div>
+            <strong>Global</strong>
+            <span>Creator network</span>
+          </div>
+          <div>
+            <strong>On-chain</strong>
+            <span>Technology</span>
+          </div>
+        </div>
+      </div>
+      <!-- HERO VISUAL -->
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-image">
+            <img
+              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=85"
+              alt="Creator livestream"
+            >
+            <div class="image-gradient"></div>
+            <div class="live-badge">
+              <span></span>
+              LIVE
+            </div>
+            <div class="viewer-count">
+              2.4K watching
+            </div>
+          </div>
+          <div class="hero-card-info">
+            <div>
+              <h3>Sofia</h3>
+              <p>🇪🇸 Spain · Live now</p>
+            </div>
+            <button
+              class="round-button"
+              onclick="scrollToSection('discover')"
+            >
+              →
+            </button>
+          </div>
+        </div>
+        <div class="floating-card floating-one">
+          <span class="floating-icon">◆</span>
+          <div>
+            <strong>Creator economy</strong>
+            <small>Built for creators</small>
+          </div>
+        </div>
+        <div class="floating-card floating-two">
+          <span class="green-dot"></span>
+          <strong>2,847 online</strong>
+        </div>
+      </div>
+    </section>
+    <!-- DISCOVER -->
+    <section class="section" id="discover">
+      <div class="section-heading">
+        <div>
+          <span class="section-label">DISCOVER</span>
+          <h2>
+            Find your next obsession.
+          </h2>
+        </div>
+        <button
+          class="text-button"
+          onclick="showMessage('Explore page coming soon')"
+        >
+          View all →
+        </button>
+      </div>
+      <!-- CREATOR GRID -->
+      <div class="creator-grid">
+        <!-- SOFIA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85"
+              alt="Sofia livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Sofia 🇪🇸</h3>
+              <p>@sofia_live</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇪🇸</span>
+                Spain
+              </div>
+            </div>
+            <span class="followers">128K</span>
+          </div>
+        </article>
+        <!-- MIA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85"
+              alt="Mia livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Mia 🇺🇸</h3>
+              <p>@mia_online</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇺🇸</span>
+                United States
+              </div>
+            </div>
+            <span class="followers">94K</span>
+          </div>
+        </article>
+        <!-- AMELIA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=85"
+              alt="Amelia livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Amelia 🇬🇧</h3>
+              <p>@amelia_live</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇬🇧</span>
+                United Kingdom
+              </div>
+            </div>
+            <span class="followers">76K</span>
+          </div>
+        </article>
+        <!-- CAMILA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85"
+              alt="Camila livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Camila 🇧🇷</h3>
+              <p>@camila_live</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇧🇷</span>
+                Brazil
+              </div>
+            </div>
+            <span class="followers">61K</span>
+          </div>
+        </article>
+        <!-- YUNA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=85"
+              alt="Yuna livestream"
+              loading="lazy"
+            >
+            <span class="online">ONLINE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Yuna 🇯🇵</h3>
+              <p>@yuna_stream</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇯🇵</span>
+                Japan
+              </div>
+            </div>
+            <span class="followers">54K</span>
+          </div>
+        </article>
+        <!-- LENA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=85"
+              alt="Lena livestream"
+              loading="lazy"
+            >
+            <span class="online">ONLINE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Lena 🇩🇪</h3>
+              <p>@lena_live</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇩🇪</span>
+                Germany
+              </div>
+            </div>
+            <span class="followers">47K</span>
+          </div>
+        </article>
+        <!-- GIULIA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=85"
+              alt="Giulia livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Giulia 🇮🇹</h3>
+              <p>@giulia_live</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇮🇹</span>
+                Italy
+              </div>
+            </div>
+            <span class="followers">39K</span>
+          </div>
+        </article>
+        <!-- NINA -->
+        <article class="creator-card">
+          <div class="creator-image">
+            <img
+              src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=900&q=85"
+              alt="Nina livestream"
+              loading="lazy"
+            >
+            <span class="online live">LIVE</span>
+          </div>
+          <div class="creator-info">
+            <div>
+              <h3>Nina 🇨🇭</h3>
+              <p>@nina_stream</p>
+              <div class="creator-location">
+                <span class="creator-flag">🇨🇭</span>
+                Switzerland
+              </div>
+            </div>
+            <span class="followers">31K</span>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- LIVE -->
+    <section class="live-section" id="live">
+      <div class="live-content">
+        <span class="section-label">LIVE NOW</span>
+        <h2>
+          The internet,
+          <span>live.</span>
+        </h2>
+        <p>
+          Watch creators broadcast in real time.
+          Join conversations. Discover new people.
+        </p>
+        <button
+          class="primary-button large"
+          onclick="showMessage('Live directory coming soon')"
+        >
+          Explore live →
+        </button>
+      </div>
+      <div class="live-panel">
+        <div class="live-panel-top">
+          <span class="live-indicator">
+            <i></i>
+            LIVE
+          </span>
+          <span>12 creators streaming</span>
+        </div>
+        <div class="live-row">
+          <div class="avatar avatar-one"></div>
+          <div class="live-user">
+            <strong>Sofia 🇪🇸</strong>
+            <span>2,431 watching</span>
+            <small class="live-user-location">
+              Spain
+            </small>
+          </div>
+          <button
+            class="watch-button"
+            onclick="showMessage('Opening Sofia live stream...')"
+          >
+            Watch
+          </button>
+        </div>
+        <div class="live-row">
+          <div class="avatar avatar-two"></div>
+          <div class="live-user">
+            <strong>Mia 🇺🇸</strong>
+            <span>1,824 watching</span>
+            <small class="live-user-location">
+              United States
+            </small>
+          </div>
+          <button
+            class="watch-button"
+            onclick="showMessage('Opening Mia live stream...')"
+          >
+            Watch
+          </button>
+        </div>
+        <div class="live-row">
+          <div class="avatar avatar-three"></div>
+          <div class="live-user">
+            <strong>Amelia 🇬🇧</strong>
+            <span>982 watching</span>
+            <small class="live-user-location">
+              United Kingdom
+            </small>
+          </div>
+          <button
+            class="watch-button"
+            onclick="showMessage('Opening Amelia live stream...')"
+          >
+            Watch
+          </button>
+        </div>
+      </div>
+    </section>
+    <!-- CREATOR CTA -->
+    <section class="creator-cta" id="creators">
+      <div class="cta-glow"></div>
+      <div class="cta-content">
+        <span class="section-label">FOR CREATORS</span>
+        <h2>
+          Your audience.
+          <br>
+          Your rules.
+        </h2>
+        <p>
+          Build your community, connect directly with fans
+          and own your creator journey.
+        </p>
+        <button
+          class="primary-button large"
+          onclick="showMessage('Creator signup coming soon')"
+        >
+          Start creating →
+        </button>
+      </div>
+    </section>
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+      <div>
+        <span class="section-label">
+          WHY DEXFANS
+        </span>
+        <h2>
+          Built differently.
+        </h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span>01</span>
+          <h3>Creator first</h3>
+          <p>
+            A platform designed around the people
+            who create the content.
+          </p>
+        </div>
+        <div class="feature">
+          <span>02</span>
+          <h3>Direct connection</h3>
+          <p>
+            Build genuine relationships with your
+            audience without unnecessary friction.
+          </p>
+        </div>
+        <div class="feature">
+          <span>03</span>
+          <h3>Next generation</h3>
+          <p>
+            Modern infrastructure designed for the
+            future of digital creators.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <span class="logo-mark">D</span>
+      DexFans
+    </div>
+    <p>
+      © 2026 DexFans. The creator network.
+    </p>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <span>◆</span>
+    <p id="toastMessage">
+      Coming soon
+    </p>
+  </div>
+  <!-- JAVASCRIPT -->
+  <script>
+    function scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) {
+        section.scrollIntoView({
+          behavior: "smooth"
+        });
+      }
+    }
+    function showMessage(message) {
+      const toast = document.getElementById("toast");
+      const text =
+        document.getElementById("toastMessage");
+      text.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2800);
+    }
+    function toggleMenu() {
+      const menu =
+        document.getElementById("mobileNav");
+      menu.classList.toggle("open");
+    }
+    /* Smooth reveal animation */
+    const observer =
+      new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+    document
+      .querySelectorAll(
+        ".section, .live-section, .creator-cta, .about-section"
+      )
+      .forEach(section => {
+        section.classList.add("reveal");
+        observer.observe(section);
+      });
+  </script>
+</body>
+</html>
