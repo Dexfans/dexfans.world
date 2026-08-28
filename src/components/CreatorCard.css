@@ -1,0 +1,149 @@
+.creator-card {
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.creator-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+}
+
+.creator-image-wrap {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #222;
+}
+
+.creator-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.creator-card:hover .creator-image {
+  transform: scale(1.04);
+}
+
+.live-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(210, 20, 50, 0.95);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  background: white;
+  border-radius: 50%;
+  animation: livePulse 1.3s infinite;
+}
+
+.viewer-count {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 12px;
+}
+
+.creator-info {
+  padding: 15px;
+}
+
+.creator-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.creator-name-row h3 {
+  margin: 0;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.country-flag {
+  font-size: 18px;
+}
+
+.creator-country {
+  margin-top: 4px;
+  color: #888;
+  font-size: 13px;
+}
+
+.watch-button {
+  width: 100%;
+  margin-top: 13px;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: white;
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.watch-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 700px) {
+  .creator-card {
+    border-radius: 12px;
+  }
+
+  .creator-info {
+    padding: 12px;
+  }
+
+  .creator-name-row h3 {
+    font-size: 15px;
+  }
+}
