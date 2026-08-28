@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <meta
     name="description"
@@ -24,124 +28,352 @@
   <link rel="stylesheet" href="casino.css">
 
   <style>
+
+    /* ================================
+       CREATOR CARDS
+       ================================ */
+
+    .creator-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .creator-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .creator-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 20px 50px rgba(0,0,0,.45);
+    }
+
     .creator-image {
       position: relative;
+      height: 300px;
       overflow: hidden;
       background: #111;
     }
 
     .creator-image img {
       width: 100%;
-      height: 280px;
-      object-fit: cover;
+      height: 100%;
       display: block;
-      transition: transform 0.5s ease;
+      object-fit: cover;
+      transition:
+        transform .6s cubic-bezier(.2,.7,.2,1);
     }
 
     .creator-card:hover .creator-image img {
-      transform: scale(1.05);
+      transform: scale(1.06);
     }
 
     .creator-image::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.65),
-        transparent 55%
-      );
       pointer-events: none;
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,.72),
+          transparent 60%
+        );
     }
 
     .online {
       position: absolute;
-      z-index: 2;
+      z-index: 3;
       top: 12px;
       left: 12px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
       padding: 6px 9px;
+
       border-radius: 7px;
-      background: rgba(0, 0, 0, 0.75);
+
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+
       color: white;
+
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.7px;
+      letter-spacing: .7px;
     }
 
-    .online.live {
-      background: rgba(225, 25, 65, 0.95);
+    .online.live::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+
+      border-radius: 50%;
+
+      background: #ff3155;
+
+      box-shadow:
+        0 0 10px rgba(255,49,85,.8);
+
+      animation:
+        livePulse 1.4s infinite;
+    }
+
+    @keyframes livePulse {
+
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .45;
+        transform: scale(.75);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+    }
+
+    .creator-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      padding: 15px;
+    }
+
+    .creator-info h3 {
+      margin: 0;
+
+      color: #fff;
+
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .creator-info p {
+      margin: 4px 0 0;
+
+      color: #777;
+
+      font-size: 12px;
     }
 
     .creator-location {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 5px;
-      color: #888;
-      font-size: 12px;
-    }
+      gap: 5px;
 
-    .creator-flag {
-      font-size: 16px;
-    }
+      margin-top: 6px;
 
-    .creator-info {
-      position: relative;
-    }
+      color: #999;
 
-    .creator-info h3 {
-      margin-bottom: 3px;
-    }
-
-    .creator-info p {
-      margin: 0;
-    }
-
-    .followers {
-      white-space: nowrap;
-    }
-
-    .live-user-location {
-      display: block;
-      margin-top: 3px;
-      color: #777;
       font-size: 11px;
     }
 
-    @media (max-width: 600px) {
-      .creator-image img {
-        height: 230px;
-      }
+    .creator-flag {
+      font-size: 15px;
     }
+
+    .followers {
+      flex-shrink: 0;
+
+      padding: 5px 7px;
+
+      border-radius: 6px;
+
+      background: rgba(255,255,255,.06);
+
+      color: #aaa;
+
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+
+    /* ================================
+       HERO IMAGE
+       ================================ */
+
+    .hero-card-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+
+      display: block;
+
+      object-fit: cover;
+    }
+
+    .hero-card-image::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,.75),
+          transparent 60%
+        );
+
+      pointer-events: none;
+    }
+
+
+    /* ================================
+       LIVE PANEL
+       ================================ */
+
+    .live-user-location {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #777;
+
+      font-size: 11px;
+    }
+
+
+    /* ================================
+       MOBILE
+       ================================ */
+
+    @media (max-width: 1100px) {
+
+      .creator-grid {
+        grid-template-columns:
+          repeat(3, minmax(0,1fr));
+      }
+
+    }
+
+
+    @media (max-width: 760px) {
+
+      .creator-grid {
+        grid-template-columns:
+          repeat(2, minmax(0,1fr));
+
+        gap: 12px;
+      }
+
+      .creator-image {
+        height: 240px;
+      }
+
+      .creator-info {
+        padding: 12px;
+      }
+
+      .creator-info h3 {
+        font-size: 14px;
+      }
+
+      .hero-card-image img {
+        min-height: 320px;
+      }
+
+    }
+
+
+    @media (max-width: 480px) {
+
+      .creator-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .creator-image {
+        height: 330px;
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- BACKGROUND -->
+
+  <!-- ================================
+       BACKGROUND
+       ================================ -->
 
   <div class="background">
+
     <div class="orb orb-one"></div>
+
     <div class="orb orb-two"></div>
+
     <div class="grid"></div>
+
   </div>
 
 
-  <!-- NAVIGATION -->
+  <!-- ================================
+       NAVIGATION
+       ================================ -->
 
   <header class="navbar">
 
     <a href="/" class="logo">
-      <span class="logo-mark">D</span>
-      <span>DexFans</span>
+
+      <span class="logo-mark">
+        D
+      </span>
+
+      <span>
+        DexFans
+      </span>
+
     </a>
 
+
     <nav class="nav-links">
-      <a href="#discover">Discover</a>
-      <a href="#live">Live</a>
-      <a href="#creators">Creators</a>
-      <a href="#about">About</a>
+
+      <a href="#discover">
+        Discover
+      </a>
+
+      <a href="#live">
+        Live
+      </a>
+
+      <a href="#creators">
+        Creators
+      </a>
+
+      <a href="#about">
+        About
+      </a>
+
     </nav>
+
 
     <div class="nav-actions">
 
@@ -152,6 +384,7 @@
         Log in
       </button>
 
+
       <button
         class="primary-button"
         onclick="showMessage('Sign up coming soon')"
@@ -160,6 +393,7 @@
       </button>
 
     </div>
+
 
     <button
       class="mobile-menu"
@@ -172,14 +406,46 @@
   </header>
 
 
-  <!-- MOBILE NAV -->
+  <!-- ================================
+       MOBILE NAVIGATION
+       ================================ -->
 
-  <div class="mobile-nav" id="mobileNav">
+  <div
+    class="mobile-nav"
+    id="mobileNav"
+  >
 
-    <a href="#discover" onclick="toggleMenu()">Discover</a>
-    <a href="#live" onclick="toggleMenu()">Live</a>
-    <a href="#creators" onclick="toggleMenu()">Creators</a>
-    <a href="#about" onclick="toggleMenu()">About</a>
+    <a
+      href="#discover"
+      onclick="toggleMenu()"
+    >
+      Discover
+    </a>
+
+
+    <a
+      href="#live"
+      onclick="toggleMenu()"
+    >
+      Live
+    </a>
+
+
+    <a
+      href="#creators"
+      onclick="toggleMenu()"
+    >
+      Creators
+    </a>
+
+
+    <a
+      href="#about"
+      onclick="toggleMenu()"
+    >
+      About
+    </a>
+
 
     <button
       class="primary-button mobile-join"
@@ -191,102 +457,185 @@
   </div>
 
 
-  <!-- HERO -->
+
+  <!-- ================================
+       MAIN
+       ================================ -->
 
   <main>
 
+
+    <!-- ================================
+         HERO
+         ================================ -->
+
     <section class="hero">
+
 
       <div class="hero-content">
 
+
         <div class="eyebrow">
+
           <span class="pulse"></span>
+
           The creator network
+
         </div>
 
+
         <h1>
+
           Your world.
-          <span>Your creators.</span>
+
+          <span>
+            Your creators.
+          </span>
+
         </h1>
 
+
         <p class="hero-text">
+
           Discover creators, connect directly and experience
           a new generation of digital content.
+
         </p>
 
+
         <div class="hero-buttons">
+
 
           <button
             class="primary-button large"
             onclick="scrollToSection('discover')"
           >
+
             Explore creators
-            <span>→</span>
+
+            <span>
+              →
+            </span>
+
           </button>
+
 
           <button
             class="secondary-button large"
             onclick="showMessage('Creator registration coming soon')"
           >
+
             Become a creator
+
           </button>
 
+
         </div>
+
 
         <div class="hero-stats">
 
-          <div>
-            <strong>24/7</strong>
-            <span>Creator activity</span>
-          </div>
 
           <div>
-            <strong>Global</strong>
-            <span>Creator network</span>
+
+            <strong>
+              24/7
+            </strong>
+
+            <span>
+              Creator activity
+            </span>
+
           </div>
 
+
           <div>
-            <strong>On-chain</strong>
-            <span>Technology</span>
+
+            <strong>
+              Global
+            </strong>
+
+            <span>
+              Creator network
+            </span>
+
           </div>
+
+
+          <div>
+
+            <strong>
+              On-chain
+            </strong>
+
+            <span>
+              Technology
+            </span>
+
+          </div>
+
 
         </div>
 
+
       </div>
+
 
 
       <!-- HERO VISUAL -->
 
       <div class="hero-visual">
 
+
         <div class="hero-card">
+
 
           <div class="hero-card-image">
 
+
             <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=85"
-              alt="Adult creator"
+              src="https://livewebcamreviews.com/wp-content/uploads/2024/06/stripchat-18.jpg"
+              alt="Sakura live creator"
             >
+
 
             <div class="image-gradient"></div>
 
+
             <div class="live-badge">
+
               <span></span>
+
               LIVE
+
             </div>
 
+
             <div class="viewer-count">
+
               2.4K watching
+
             </div>
+
 
           </div>
 
+
           <div class="hero-card-info">
 
+
             <div>
-              <h3>Sofia 🇪🇸</h3>
-              <p>Spain · Live now</p>
+
+              <h3>
+                Sakura 🇯🇵
+              </h3>
+
+              <p>
+                Japan · Live now
+              </p>
+
             </div>
+
 
             <button
               class="round-button"
@@ -295,42 +644,78 @@
               →
             </button>
 
+
           </div>
 
+
         </div>
+
 
         <div class="floating-card floating-one">
-          <span class="floating-icon">◆</span>
+
+          <span class="floating-icon">
+            ◆
+          </span>
 
           <div>
-            <strong>Creator economy</strong>
-            <small>Built for creators</small>
+
+            <strong>
+              Creator economy
+            </strong>
+
+            <small>
+              Built for creators
+            </small>
+
           </div>
+
         </div>
+
 
         <div class="floating-card floating-two">
+
           <span class="green-dot"></span>
-          <strong>2,847 online</strong>
+
+          <strong>
+            2,847 online
+          </strong>
+
         </div>
 
+
       </div>
+
 
     </section>
 
 
-    <!-- DISCOVER -->
 
-    <section class="section" id="discover">
+    <!-- ================================
+         DISCOVER
+         ================================ -->
+
+    <section
+      class="section"
+      id="discover"
+    >
+
 
       <div class="section-heading">
 
+
         <div>
-          <span class="section-label">DISCOVER</span>
+
+          <span class="section-label">
+            DISCOVER
+          </span>
+
 
           <h2>
             Find your next obsession.
           </h2>
+
         </div>
+
 
         <button
           class="text-button"
@@ -339,445 +724,739 @@
           View all →
         </button>
 
+
       </div>
 
 
-      <!-- CREATOR GRID -->
 
       <div class="creator-grid">
 
 
+        <!-- 01 -->
+
         <article class="creator-card">
+
 
           <div class="creator-image">
 
             <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85"
-              alt="Sofia"
+              src="https://livewebcamreviews.com/wp-content/uploads/2024/06/stripchat-18.jpg"
+              alt="Yuki Tanaka"
               loading="lazy"
             >
 
-            <span class="online live">LIVE</span>
+            <span class="online live">
+              LIVE
+            </span>
 
           </div>
+
 
           <div class="creator-info">
 
             <div>
-              <h3>Sofia 🇪🇸</h3>
-              <p>@sofia_live</p>
+
+              <h3>
+                Yuki Tanaka 🇯🇵
+              </h3>
+
+              <p>
+                @yuki_live
+              </p>
+
 
               <div class="creator-location">
-                <span class="creator-flag">🇪🇸</span>
-                Spain
-              </div>
-            </div>
 
-            <span class="followers">128K</span>
+                <span class="creator-flag">
+                  🇯🇵
+                </span>
 
-          </div>
-
-        </article>
-
-
-        <article class="creator-card">
-
-          <div class="creator-image">
-
-            <img
-              src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=85"
-              alt="Mia"
-              loading="lazy"
-            >
-
-            <span class="online live">LIVE</span>
-
-          </div>
-
-          <div class="creator-info">
-
-            <div>
-              <h3>Mia 🇺🇸</h3>
-              <p>@mia_online</p>
-
-              <div class="creator-location">
-                <span class="creator-flag">🇺🇸</span>
-                United States
-              </div>
-            </div>
-
-            <span class="followers">94K</span>
-
-          </div>
-
-        </article>
-
-
-        <article class="creator-card">
-
-          <div class="creator-image">
-
-            <img
-              src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=900&q=85"
-              alt="Amelia"
-              loading="lazy"
-            >
-
-            <span class="online live">LIVE</span>
-
-          </div>
-
-          <div class="creator-info">
-
-            <div>
-              <h3>Amelia 🇬🇧</h3>
-              <p>@amelia_live</p>
-
-              <div class="creator-location">
-                <span class="creator-flag">🇬🇧</span>
-                United Kingdom
-              </div>
-            </div>
-
-            <span class="followers">76K</span>
-
-          </div>
-
-        </article>
-
-
-        <article class="creator-card">
-
-          <div class="creator-image">
-
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85"
-              alt="Camila"
-              loading="lazy"
-            >
-
-            <span class="online live">LIVE</span>
-
-          </div>
-
-          <div class="creator-info">
-
-            <div>
-              <h3>Camila 🇧🇷</h3>
-              <p>@camila_live</p>
-
-              <div class="creator-location">
-                <span class="creator-flag">🇧🇷</span>
-                Brazil
-              </div>
-            </div>
-
-            <span class="followers">61K</span>
-
-          </div>
-
-        </article>
-
-
-        <article class="creator-card">
-
-          <div class="creator-image">
-
-            <img
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=85"
-              alt="Yuna"
-              loading="lazy"
-            >
-
-            <span class="online">ONLINE</span>
-
-          </div>
-
-          <div class="creator-info">
-
-            <div>
-              <h3>Yuna 🇯🇵</h3>
-              <p>@yuna_stream</p>
-
-              <div class="creator-location">
-                <span class="creator-flag">🇯🇵</span>
                 Japan
+
               </div>
+
             </div>
 
-            <span class="followers">54K</span>
+
+            <span class="followers">
+              128K
+            </span>
 
           </div>
+
 
         </article>
 
 
+
+        <!-- 02 -->
+
         <article class="creator-card">
+
 
           <div class="creator-image">
 
             <img
-              src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=85"
-              alt="Lena"
+              src="https://static-proxy.strpst.com/previews/e/7/8/e7833a6f44432c8a1b6eda3bbc0e3423-full"
+              alt="Mei Lin"
               loading="lazy"
             >
 
-            <span class="online">ONLINE</span>
+            <span class="online live">
+              LIVE
+            </span>
 
           </div>
+
 
           <div class="creator-info">
 
             <div>
-              <h3>Lena 🇩🇪</h3>
-              <p>@lena_live</p>
+
+              <h3>
+                Mei Lin 🇨🇳
+              </h3>
+
+              <p>
+                @meilin_live
+              </p>
+
 
               <div class="creator-location">
-                <span class="creator-flag">🇩🇪</span>
-                Germany
+
+                <span class="creator-flag">
+                  🇨🇳
+                </span>
+
+                China
+
               </div>
+
             </div>
 
-            <span class="followers">47K</span>
+
+            <span class="followers">
+              94K
+            </span>
 
           </div>
+
 
         </article>
 
 
+
+        <!-- 03 -->
+
         <article class="creator-card">
+
 
           <div class="creator-image">
 
             <img
-              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=85"
-              alt="Giulia"
+              src="https://adultwebcams.online/wp-content/uploads/2024/04/Stripchat-Asian.jpg"
+              alt="Sakura Mori"
               loading="lazy"
             >
 
-            <span class="online live">LIVE</span>
+            <span class="online live">
+              LIVE
+            </span>
 
           </div>
+
 
           <div class="creator-info">
 
             <div>
-              <h3>Giulia 🇮🇹</h3>
-              <p>@giulia_live</p>
+
+              <h3>
+                Sakura Mori 🇯🇵
+              </h3>
+
+              <p>
+                @sakura_stream
+              </p>
+
 
               <div class="creator-location">
-                <span class="creator-flag">🇮🇹</span>
-                Italy
+
+                <span class="creator-flag">
+                  🇯🇵
+                </span>
+
+                Japan
+
               </div>
+
             </div>
 
-            <span class="followers">39K</span>
+
+            <span class="followers">
+              76K
+            </span>
 
           </div>
+
 
         </article>
 
 
+
+        <!-- 04 -->
+
         <article class="creator-card">
+
 
           <div class="creator-image">
 
             <img
-              src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=900&q=85"
-              alt="Nina"
+              src="https://hls.strpst.com/records/89104597/2022/12/23/b31210f2c67e1ea1ae7bb97b209cf0865278d07e.jpg"
+              alt="Hana Kim"
               loading="lazy"
             >
 
-            <span class="online live">LIVE</span>
+            <span class="online live">
+              LIVE
+            </span>
 
           </div>
+
 
           <div class="creator-info">
 
             <div>
-              <h3>Nina 🇨🇭</h3>
-              <p>@nina_stream</p>
+
+              <h3>
+                Hana Kim 🇰🇷
+              </h3>
+
+              <p>
+                @hana_live
+              </p>
+
 
               <div class="creator-location">
-                <span class="creator-flag">🇨🇭</span>
-                Switzerland
+
+                <span class="creator-flag">
+                  🇰🇷
+                </span>
+
+                South Korea
+
               </div>
+
             </div>
 
-            <span class="followers">31K</span>
+
+            <span class="followers">
+              61K
+            </span>
 
           </div>
 
+
         </article>
+
+
+
+        <!-- 05 -->
+
+        <article class="creator-card">
+
+
+          <div class="creator-image">
+
+            <img
+              src="https://adultwebcams.online/wp-content/uploads/2024/04/Asian-stripchat.jpg"
+              alt="Aiko Nakamura"
+              loading="lazy"
+            >
+
+            <span class="online live">
+              LIVE
+            </span>
+
+          </div>
+
+
+          <div class="creator-info">
+
+            <div>
+
+              <h3>
+                Aiko Nakamura 🇯🇵
+              </h3>
+
+              <p>
+                @aiko_online
+              </p>
+
+
+              <div class="creator-location">
+
+                <span class="creator-flag">
+                  🇯🇵
+                </span>
+
+                Japan
+
+              </div>
+
+            </div>
+
+
+            <span class="followers">
+              54K
+            </span>
+
+          </div>
+
+
+        </article>
+
+
+
+        <!-- 06 -->
+
+        <article class="creator-card">
+
+
+          <div class="creator-image">
+
+            <img
+              src="https://static-proxy.strpst.com/previews/f/8/9/f892196bfa72d992bd550aa7f0b96a6b-thumb-big"
+              alt="Jia Wei"
+              loading="lazy"
+            >
+
+            <span class="online live">
+              LIVE
+            </span>
+
+          </div>
+
+
+          <div class="creator-info">
+
+            <div>
+
+              <h3>
+                Jia Wei 🇸🇬
+              </h3>
+
+              <p>
+                @jiawei_live
+              </p>
+
+
+              <div class="creator-location">
+
+                <span class="creator-flag">
+                  🇸🇬
+                </span>
+
+                Singapore
+
+              </div>
+
+            </div>
+
+
+            <span class="followers">
+              47K
+            </span>
+
+          </div>
+
+
+        </article>
+
+
+
+        <!-- 07 -->
+
+        <article class="creator-card">
+
+
+          <div class="creator-image">
+
+            <img
+              src="https://ic-vt-nss.xhcdn.com/a/YzQ2YjgwNmQ2MzU1MzcyNmJmOTE0MTgzODgzZDE2MDc/s(w:2560,h:1440),webp/025/731/775/v2/2560x1440.201.webp"
+              alt="Nari Park"
+              loading="lazy"
+            >
+
+            <span class="online live">
+              LIVE
+            </span>
+
+          </div>
+
+
+          <div class="creator-info">
+
+            <div>
+
+              <h3>
+                Nari Park 🇰🇷
+              </h3>
+
+              <p>
+                @nari_stream
+              </p>
+
+
+              <div class="creator-location">
+
+                <span class="creator-flag">
+                  🇰🇷
+                </span>
+
+                South Korea
+
+              </div>
+
+            </div>
+
+
+            <span class="followers">
+              39K
+            </span>
+
+          </div>
+
+
+        </article>
+
+
+
+        <!-- 08 -->
+
+        <article class="creator-card">
+
+
+          <div class="creator-image">
+
+            <img
+              src="https://i0.wp.com/asianwebcamreviews.com/wp-content/uploads/2024/06/Asian-pussy.jpg?resize=1200%2C675&ssl=1"
+              alt="Mika Sato"
+              loading="lazy"
+            >
+
+            <span class="online live">
+              LIVE
+            </span>
+
+          </div>
+
+
+          <div class="creator-info">
+
+            <div>
+
+              <h3>
+                Mika Sato 🇯🇵
+              </h3>
+
+              <p>
+                @mika_live
+              </p>
+
+
+              <div class="creator-location">
+
+                <span class="creator-flag">
+                  🇯🇵
+                </span>
+
+                Japan
+
+              </div>
+
+            </div>
+
+
+            <span class="followers">
+              31K
+            </span>
+
+          </div>
+
+
+        </article>
+
 
       </div>
+
 
     </section>
 
 
-    <!-- LIVE -->
 
-    <section class="live-section" id="live">
+    <!-- ================================
+         LIVE
+         ================================ -->
+
+    <section
+      class="live-section"
+      id="live"
+    >
+
 
       <div class="live-content">
 
-        <span class="section-label">LIVE NOW</span>
+
+        <span class="section-label">
+          LIVE NOW
+        </span>
+
 
         <h2>
+
           The internet,
-          <span>live.</span>
+
+          <span>
+            live.
+          </span>
+
         </h2>
 
+
         <p>
+
           Watch creators broadcast in real time.
           Join conversations. Discover new people.
+
         </p>
+
 
         <button
           class="primary-button large"
           onclick="showMessage('Live directory coming soon')"
         >
+
           Explore live →
+
         </button>
 
+
       </div>
+
 
 
       <div class="live-panel">
 
+
         <div class="live-panel-top">
 
           <span class="live-indicator">
+
             <i></i>
+
             LIVE
+
           </span>
 
-          <span>12 creators streaming</span>
+
+          <span>
+            12 creators streaming
+          </span>
 
         </div>
 
 
+
+        <!-- LIVE 01 -->
+
         <div class="live-row">
+
 
           <div class="avatar avatar-one"></div>
 
+
           <div class="live-user">
 
-            <strong>Sofia 🇪🇸</strong>
-            <span>2,431 watching</span>
+            <strong>
+              Yuki Tanaka 🇯🇵
+            </strong>
+
+            <span>
+              2,431 watching
+            </span>
 
             <small class="live-user-location">
-              Spain
+              Japan
             </small>
 
           </div>
 
+
           <button
             class="watch-button"
-            onclick="showMessage('Opening Sofia live stream...')"
+            onclick="showMessage('Opening Yuki live stream...')"
           >
             Watch
           </button>
 
+
         </div>
 
 
+
+        <!-- LIVE 02 -->
+
         <div class="live-row">
+
 
           <div class="avatar avatar-two"></div>
 
+
           <div class="live-user">
 
-            <strong>Mia 🇺🇸</strong>
-            <span>1,824 watching</span>
+            <strong>
+              Mei Lin 🇨🇳
+            </strong>
+
+            <span>
+              1,824 watching
+            </span>
 
             <small class="live-user-location">
-              United States
+              China
             </small>
 
           </div>
 
+
           <button
             class="watch-button"
-            onclick="showMessage('Opening Mia live stream...')"
+            onclick="showMessage('Opening Mei live stream...')"
           >
             Watch
           </button>
 
+
         </div>
 
+
+
+        <!-- LIVE 03 -->
 
         <div class="live-row">
 
+
           <div class="avatar avatar-three"></div>
+
 
           <div class="live-user">
 
-            <strong>Amelia 🇬🇧</strong>
-            <span>982 watching</span>
+            <strong>
+              Hana Kim 🇰🇷
+            </strong>
+
+            <span>
+              982 watching
+            </span>
 
             <small class="live-user-location">
-              United Kingdom
+              South Korea
             </small>
 
           </div>
 
+
           <button
             class="watch-button"
-            onclick="showMessage('Opening Amelia live stream...')"
+            onclick="showMessage('Opening Hana live stream...')"
           >
             Watch
           </button>
 
+
         </div>
 
+
       </div>
+
 
     </section>
 
 
-    <!-- CREATOR CTA -->
 
-    <section class="creator-cta" id="creators">
+    <!-- ================================
+         CREATOR CTA
+         ================================ -->
+
+    <section
+      class="creator-cta"
+      id="creators"
+    >
+
 
       <div class="cta-glow"></div>
 
+
       <div class="cta-content">
 
-        <span class="section-label">FOR CREATORS</span>
+
+        <span class="section-label">
+          FOR CREATORS
+        </span>
+
 
         <h2>
+
           Your audience.
+
           <br>
+
           Your rules.
+
         </h2>
 
+
         <p>
+
           Build your community, connect directly with fans
           and own your creator journey.
+
         </p>
+
 
         <button
           class="primary-button large"
           onclick="showMessage('Creator signup coming soon')"
         >
+
           Start creating →
+
         </button>
 
+
       </div>
+
 
     </section>
 
 
-    <!-- ABOUT -->
 
-    <section class="about-section" id="about">
+    <!-- ================================
+         ABOUT
+         ================================ -->
+
+    <section
+      class="about-section"
+      id="about"
+    >
+
 
       <div>
 
         <span class="section-label">
           WHY DEXFANS
         </span>
+
 
         <h2>
           Built differently.
@@ -786,75 +1465,139 @@
       </div>
 
 
+
       <div class="features">
 
-        <div class="feature">
-          <span>01</span>
 
-          <h3>Creator first</h3>
+        <div class="feature">
+
+          <span>
+            01
+          </span>
+
+          <h3>
+            Creator first
+          </h3>
 
           <p>
+
             A platform designed around the people
             who create the content.
+
           </p>
+
         </div>
 
-        <div class="feature">
-          <span>02</span>
 
-          <h3>Direct connection</h3>
+
+        <div class="feature">
+
+          <span>
+            02
+          </span>
+
+          <h3>
+            Direct connection
+          </h3>
 
           <p>
+
             Build genuine relationships with your
             audience without unnecessary friction.
+
           </p>
+
         </div>
+
+
 
         <div class="feature">
-          <span>03</span>
 
-          <h3>Next generation</h3>
+          <span>
+            03
+          </span>
+
+          <h3>
+            Next generation
+          </h3>
 
           <p>
+
             Modern infrastructure designed for the
             future of digital creators.
+
           </p>
+
         </div>
+
 
       </div>
 
+
     </section>
+
 
   </main>
 
 
-  <!-- FOOTER -->
+
+  <!-- ================================
+       FOOTER
+       ================================ -->
 
   <footer>
 
+
     <div class="footer-logo">
-      <span class="logo-mark">D</span>
+
+      <span class="logo-mark">
+        D
+      </span>
+
       DexFans
+
     </div>
+
 
     <p>
       © 2026 DexFans. The creator network.
     </p>
 
+
     <div class="footer-links">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-      <a href="#">Contact</a>
+
+      <a href="#">
+        Privacy
+      </a>
+
+      <a href="#">
+        Terms
+      </a>
+
+      <a href="#">
+        Contact
+      </a>
+
     </div>
+
 
   </footer>
 
 
-  <!-- TOAST -->
 
-  <div class="toast" id="toast">
+  <!-- ================================
+       TOAST
+       ================================ -->
 
-    <span>◆</span>
+  <div
+    class="toast"
+    id="toast"
+  >
+
+    <span>
+      ◆
+    </span>
+
 
     <p id="toastMessage">
       Coming soon
@@ -863,37 +1606,56 @@
   </div>
 
 
+
+  <!-- ================================
+       JAVASCRIPT
+       ================================ -->
+
   <script>
+
 
     function scrollToSection(id) {
 
-      const section = document.getElementById(id);
+      const section =
+        document.getElementById(id);
+
 
       if (section) {
+
         section.scrollIntoView({
           behavior: "smooth"
         });
+
       }
 
     }
 
 
+
     function showMessage(message) {
 
-      const toast = document.getElementById("toast");
+      const toast =
+        document.getElementById("toast");
+
 
       const text =
         document.getElementById("toastMessage");
 
+
       text.textContent = message;
+
 
       toast.classList.add("show");
 
+
       setTimeout(() => {
+
         toast.classList.remove("show");
+
       }, 2800);
 
     }
+
 
 
     function toggleMenu() {
@@ -901,27 +1663,36 @@
       const menu =
         document.getElementById("mobileNav");
 
+
       menu.classList.toggle("open");
 
     }
 
 
+
+    /* Smooth reveal animation */
+
     const observer =
       new IntersectionObserver(
+
         entries => {
 
           entries.forEach(entry => {
 
             if (entry.isIntersecting) {
+
               entry.target.classList.add("visible");
+
             }
 
           });
 
         },
+
         {
           threshold: 0.12
         }
+
       );
 
 
@@ -937,7 +1708,9 @@
 
       });
 
+
   </script>
+
 
 </body>
 </html>
