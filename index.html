@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta
     name="description"
-    content="DexFans — discover creators, connect, and experience content your way."
+    content="DexFans — discover creators and live streams."
   >
 
   <meta name="theme-color" content="#050505">
 
-  <title>DexFans — The Creator Network</title>
+  <title>DexFans — Creator Network</title>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -25,355 +23,40 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="casino.css">
-
-  <style>
-
-    /* ================================
-       CREATOR CARDS
-       ================================ */
-
-    .creator-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .creator-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.08);
-      transition:
-        transform .3s ease,
-        border-color .3s ease,
-        box-shadow .3s ease;
-    }
-
-    .creator-card:hover {
-      transform: translateY(-7px);
-      border-color: rgba(255,255,255,.18);
-      box-shadow: 0 20px 50px rgba(0,0,0,.45);
-    }
-
-    .creator-image {
-      position: relative;
-      height: 300px;
-      overflow: hidden;
-      background: #111;
-    }
-
-    .creator-image img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      transition:
-        transform .6s cubic-bezier(.2,.7,.2,1);
-    }
-
-    .creator-card:hover .creator-image img {
-      transform: scale(1.06);
-    }
-
-    .creator-image::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          to top,
-          rgba(0,0,0,.72),
-          transparent 60%
-        );
-    }
-
-    .online {
-      position: absolute;
-      z-index: 3;
-      top: 12px;
-      left: 12px;
-
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-
-      padding: 6px 9px;
-
-      border-radius: 7px;
-
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(10px);
-
-      color: white;
-
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .7px;
-    }
-
-    .online.live::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-
-      border-radius: 50%;
-
-      background: #ff3155;
-
-      box-shadow:
-        0 0 10px rgba(255,49,85,.8);
-
-      animation:
-        livePulse 1.4s infinite;
-    }
-
-    @keyframes livePulse {
-
-      0% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: .45;
-        transform: scale(.75);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-    }
-
-    .creator-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-
-      padding: 15px;
-    }
-
-    .creator-info h3 {
-      margin: 0;
-
-      color: #fff;
-
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .creator-info p {
-      margin: 4px 0 0;
-
-      color: #777;
-
-      font-size: 12px;
-    }
-
-    .creator-location {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-
-      margin-top: 6px;
-
-      color: #999;
-
-      font-size: 11px;
-    }
-
-    .creator-flag {
-      font-size: 15px;
-    }
-
-    .followers {
-      flex-shrink: 0;
-
-      padding: 5px 7px;
-
-      border-radius: 6px;
-
-      background: rgba(255,255,255,.06);
-
-      color: #aaa;
-
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-
-    /* ================================
-       HERO IMAGE
-       ================================ */
-
-    .hero-card-image {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card-image img {
-      width: 100%;
-      height: 100%;
-      min-height: 420px;
-
-      display: block;
-
-      object-fit: cover;
-    }
-
-    .hero-card-image::after {
-      content: "";
-
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          to top,
-          rgba(0,0,0,.75),
-          transparent 60%
-        );
-
-      pointer-events: none;
-    }
-
-
-    /* ================================
-       LIVE PANEL
-       ================================ */
-
-    .live-user-location {
-      display: block;
-
-      margin-top: 3px;
-
-      color: #777;
-
-      font-size: 11px;
-    }
-
-
-    /* ================================
-       MOBILE
-       ================================ */
-
-    @media (max-width: 1100px) {
-
-      .creator-grid {
-        grid-template-columns:
-          repeat(3, minmax(0,1fr));
-      }
-
-    }
-
-
-    @media (max-width: 760px) {
-
-      .creator-grid {
-        grid-template-columns:
-          repeat(2, minmax(0,1fr));
-
-        gap: 12px;
-      }
-
-      .creator-image {
-        height: 240px;
-      }
-
-      .creator-info {
-        padding: 12px;
-      }
-
-      .creator-info h3 {
-        font-size: 14px;
-      }
-
-      .hero-card-image img {
-        min-height: 320px;
-      }
-
-    }
-
-
-    @media (max-width: 480px) {
-
-      .creator-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .creator-image {
-        height: 330px;
-      }
-
-    }
-
-  </style>
-
+  <!-- Your main stylesheet -->
+  <link rel="stylesheet" href="./casino.css">
 </head>
-
 
 <body>
 
-
-  <!-- ================================
+  <!-- =====================================================
        BACKGROUND
-       ================================ -->
+       ===================================================== -->
 
   <div class="background">
-
     <div class="orb orb-one"></div>
-
     <div class="orb orb-two"></div>
-
     <div class="grid"></div>
-
   </div>
 
 
-  <!-- ================================
+  <!-- =====================================================
        NAVIGATION
-       ================================ -->
+       ===================================================== -->
 
   <header class="navbar">
 
-    <a href="/" class="logo">
-
-      <span class="logo-mark">
-        D
-      </span>
-
-      <span>
-        DexFans
-      </span>
-
+    <a href="./index.html" class="logo">
+      <span class="logo-mark">D</span>
+      <span>DexFans</span>
     </a>
 
-
     <nav class="nav-links">
-
-      <a href="#discover">
-        Discover
-      </a>
-
-      <a href="#live">
-        Live
-      </a>
-
-      <a href="#creators">
-        Creators
-      </a>
-
-      <a href="#about">
-        About
-      </a>
-
+      <a href="#discover">Discover</a>
+      <a href="#live">Live</a>
+      <a href="#creators">Creators</a>
+      <a href="#about">About</a>
     </nav>
-
 
     <div class="nav-actions">
 
@@ -384,7 +67,6 @@
         Log in
       </button>
 
-
       <button
         class="primary-button"
         onclick="showMessage('Sign up coming soon')"
@@ -393,7 +75,6 @@
       </button>
 
     </div>
-
 
     <button
       class="mobile-menu"
@@ -406,46 +87,16 @@
   </header>
 
 
-  <!-- ================================
-       MOBILE NAVIGATION
-       ================================ -->
+  <!-- =====================================================
+       MOBILE NAV
+       ===================================================== -->
 
-  <div
-    class="mobile-nav"
-    id="mobileNav"
-  >
+  <div class="mobile-nav" id="mobileNav">
 
-    <a
-      href="#discover"
-      onclick="toggleMenu()"
-    >
-      Discover
-    </a>
-
-
-    <a
-      href="#live"
-      onclick="toggleMenu()"
-    >
-      Live
-    </a>
-
-
-    <a
-      href="#creators"
-      onclick="toggleMenu()"
-    >
-      Creators
-    </a>
-
-
-    <a
-      href="#about"
-      onclick="toggleMenu()"
-    >
-      About
-    </a>
-
+    <a href="#discover" onclick="toggleMenu()">Discover</a>
+    <a href="#live" onclick="toggleMenu()">Live</a>
+    <a href="#creators" onclick="toggleMenu()">Creators</a>
+    <a href="#about" onclick="toggleMenu()">About</a>
 
     <button
       class="primary-button mobile-join"
@@ -457,185 +108,105 @@
   </div>
 
 
-
-  <!-- ================================
-       MAIN
-       ================================ -->
+  <!-- =====================================================
+       HERO
+       ===================================================== -->
 
   <main>
 
-
-    <!-- ================================
-         HERO
-         ================================ -->
-
     <section class="hero">
-
 
       <div class="hero-content">
 
-
         <div class="eyebrow">
-
           <span class="pulse"></span>
-
-          The creator network
-
+          Creators are live now
         </div>
 
-
         <h1>
-
           Your world.
-
-          <span>
-            Your creators.
-          </span>
-
+          <span>Your creators.</span>
         </h1>
 
-
         <p class="hero-text">
-
-          Discover creators, connect directly and experience
-          a new generation of digital content.
-
+          Discover creators, join live streams and connect
+          with people from around the world.
         </p>
 
-
         <div class="hero-buttons">
-
 
           <button
             class="primary-button large"
             onclick="scrollToSection('discover')"
           >
-
             Explore creators
-
-            <span>
-              →
-            </span>
-
+            <span>→</span>
           </button>
-
 
           <button
             class="secondary-button large"
-            onclick="showMessage('Creator registration coming soon')"
+            onclick="scrollToSection('live')"
           >
-
-            Become a creator
-
+            Watch live
           </button>
 
-
         </div>
-
 
         <div class="hero-stats">
 
-
           <div>
-
-            <strong>
-              24/7
-            </strong>
-
-            <span>
-              Creator activity
-            </span>
-
+            <strong>24/7</strong>
+            <span>Live activity</span>
           </div>
 
-
           <div>
-
-            <strong>
-              Global
-            </strong>
-
-            <span>
-              Creator network
-            </span>
-
+            <strong>Global</strong>
+            <span>Creators</span>
           </div>
 
-
           <div>
-
-            <strong>
-              On-chain
-            </strong>
-
-            <span>
-              Technology
-            </span>
-
+            <strong>Live</strong>
+            <span>Streaming</span>
           </div>
-
 
         </div>
-
 
       </div>
 
 
-
-      <!-- HERO VISUAL -->
+      <!-- HERO IMAGE -->
 
       <div class="hero-visual">
 
-
         <div class="hero-card">
-
 
           <div class="hero-card-image">
 
-
             <img
               src="https://livewebcamreviews.com/wp-content/uploads/2024/06/stripchat-18.jpg"
-              alt="Sakura live creator"
+              alt="Creator live stream"
+              loading="eager"
             >
-
 
             <div class="image-gradient"></div>
 
-
             <div class="live-badge">
-
               <span></span>
-
               LIVE
-
             </div>
-
 
             <div class="viewer-count">
-
               2.4K watching
-
             </div>
-
 
           </div>
 
-
           <div class="hero-card-info">
 
-
             <div>
-
-              <h3>
-                Sakura 🇯🇵
-              </h3>
-
-              <p>
-                Japan · Live now
-              </p>
-
+              <h3>Creators are live</h3>
+              <p>Discover someone new</p>
             </div>
-
 
             <button
               class="round-button"
@@ -644,29 +215,18 @@
               →
             </button>
 
-
           </div>
-
 
         </div>
 
 
         <div class="floating-card floating-one">
 
-          <span class="floating-icon">
-            ◆
-          </span>
+          <span class="floating-icon">◆</span>
 
           <div>
-
-            <strong>
-              Creator economy
-            </strong>
-
-            <small>
-              Built for creators
-            </small>
-
+            <strong>Global creators</strong>
+            <small>Discover something new</small>
           </div>
 
         </div>
@@ -676,32 +236,22 @@
 
           <span class="green-dot"></span>
 
-          <strong>
-            2,847 online
-          </strong>
+          <strong>2,847 online</strong>
 
         </div>
 
-
       </div>
-
 
     </section>
 
 
-
-    <!-- ================================
+    <!-- =====================================================
          DISCOVER
-         ================================ -->
+         ===================================================== -->
 
-    <section
-      class="section"
-      id="discover"
-    >
-
+    <section class="section" id="discover">
 
       <div class="section-heading">
-
 
         <div>
 
@@ -709,13 +259,11 @@
             DISCOVER
           </span>
 
-
           <h2>
             Find your next obsession.
           </h2>
 
         </div>
-
 
         <button
           class="text-button"
@@ -724,59 +272,44 @@
           View all →
         </button>
 
-
       </div>
-
 
 
       <div class="creator-grid">
 
 
-        <!-- 01 -->
+        <!-- CREATOR 01 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://livewebcamreviews.com/wp-content/uploads/2024/06/stripchat-18.jpg"
-              alt="Yuki Tanaka"
+              alt="Aiko"
               loading="lazy"
             >
 
-            <span class="online live">
-              LIVE
+            <span class="online">
+              ONLINE
             </span>
 
           </div>
-
 
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Yuki Tanaka 🇯🇵
-              </h3>
+              <h3>Aiko</h3>
 
-              <p>
-                @yuki_live
-              </p>
-
+              <p>@aiko_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇯🇵
-                </span>
-
+                <span class="creator-flag">🇯🇵</span>
                 Japan
-
               </div>
 
             </div>
-
 
             <span class="followers">
               128K
@@ -784,56 +317,41 @@
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 02 -->
+        <!-- CREATOR 02 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://static-proxy.strpst.com/previews/e/7/8/e7833a6f44432c8a1b6eda3bbc0e3423-full"
-              alt="Mei Lin"
+              alt="Yuna"
               loading="lazy"
             >
 
-            <span class="online live">
-              LIVE
+            <span class="online">
+              ONLINE
             </span>
 
           </div>
-
 
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Mei Lin 🇨🇳
-              </h3>
+              <h3>Yuna</h3>
 
-              <p>
-                @meilin_live
-              </p>
-
+              <p>@yuna_world</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇨🇳
-                </span>
-
-                China
-
+                <span class="creator-flag">🇰🇷</span>
+                South Korea
               </div>
 
             </div>
-
 
             <span class="followers">
               94K
@@ -841,56 +359,41 @@
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 03 -->
+        <!-- CREATOR 03 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://adultwebcams.online/wp-content/uploads/2024/04/Stripchat-Asian.jpg"
-              alt="Sakura Mori"
+              alt="Mei"
               loading="lazy"
             >
 
-            <span class="online live">
+            <span class="online">
               LIVE
             </span>
 
           </div>
 
-
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Sakura Mori 🇯🇵
-              </h3>
+              <h3>Mei</h3>
 
-              <p>
-                @sakura_stream
-              </p>
-
+              <p>@mei_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇯🇵
-                </span>
-
-                Japan
-
+                <span class="creator-flag">🇨🇳</span>
+                China
               </div>
 
             </div>
-
 
             <span class="followers">
               76K
@@ -898,56 +401,41 @@
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 04 -->
+        <!-- CREATOR 04 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://hls.strpst.com/records/89104597/2022/12/23/b31210f2c67e1ea1ae7bb97b209cf0865278d07e.jpg"
-              alt="Hana Kim"
+              alt="Hana"
               loading="lazy"
             >
 
-            <span class="online live">
-              LIVE
+            <span class="online">
+              ONLINE
             </span>
 
           </div>
-
 
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Hana Kim 🇰🇷
-              </h3>
+              <h3>Hana</h3>
 
-              <p>
-                @hana_live
-              </p>
-
+              <p>@hana_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇰🇷
-                </span>
-
-                South Korea
-
+                <span class="creator-flag">🇯🇵</span>
+                Japan
               </div>
 
             </div>
-
 
             <span class="followers">
               61K
@@ -955,56 +443,41 @@
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 05 -->
+        <!-- CREATOR 05 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://adultwebcams.online/wp-content/uploads/2024/04/Asian-stripchat.jpg"
-              alt="Aiko Nakamura"
+              alt="Sakura"
               loading="lazy"
             >
 
-            <span class="online live">
+            <span class="online">
               LIVE
             </span>
 
           </div>
 
-
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Aiko Nakamura 🇯🇵
-              </h3>
+              <h3>Sakura</h3>
 
-              <p>
-                @aiko_online
-              </p>
-
+              <p>@sakura_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇯🇵
-                </span>
-
+                <span class="creator-flag">🇯🇵</span>
                 Japan
-
               </div>
 
             </div>
-
 
             <span class="followers">
               54K
@@ -1012,252 +485,179 @@
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 06 -->
+        <!-- CREATOR 06 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://static-proxy.strpst.com/previews/f/8/9/f892196bfa72d992bd550aa7f0b96a6b-thumb-big"
-              alt="Jia Wei"
+              alt="Nari"
               loading="lazy"
             >
 
-            <span class="online live">
-              LIVE
+            <span class="online">
+              ONLINE
             </span>
 
           </div>
-
 
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Jia Wei 🇸🇬
-              </h3>
+              <h3>Nari</h3>
 
-              <p>
-                @jiawei_live
-              </p>
-
+              <p>@nari_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇸🇬
-                </span>
-
-                Singapore
-
+                <span class="creator-flag">🇰🇷</span>
+                South Korea
               </div>
 
             </div>
 
-
             <span class="followers">
-              47K
+              48K
             </span>
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 07 -->
+        <!-- CREATOR 07 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://ic-vt-nss.xhcdn.com/a/YzQ2YjgwNmQ2MzU1MzcyNmJmOTE0MTgzODgzZDE2MDc/s(w:2560,h:1440),webp/025/731/775/v2/2560x1440.201.webp"
-              alt="Nari Park"
+              alt="Rin"
               loading="lazy"
             >
 
-            <span class="online live">
-              LIVE
+            <span class="online">
+              ONLINE
             </span>
 
           </div>
-
 
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Nari Park 🇰🇷
-              </h3>
+              <h3>Rin</h3>
 
-              <p>
-                @nari_stream
-              </p>
-
+              <p>@rin_world</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇰🇷
-                </span>
-
-                South Korea
-
+                <span class="creator-flag">🇯🇵</span>
+                Japan
               </div>
 
             </div>
 
-
             <span class="followers">
-              39K
+              41K
             </span>
 
           </div>
 
-
         </article>
 
 
-
-        <!-- 08 -->
+        <!-- CREATOR 08 -->
 
         <article class="creator-card">
-
 
           <div class="creator-image">
 
             <img
               src="https://i0.wp.com/asianwebcamreviews.com/wp-content/uploads/2024/06/Asian-pussy.jpg?resize=1200%2C675&ssl=1"
-              alt="Mika Sato"
+              alt="Mina"
               loading="lazy"
             >
 
-            <span class="online live">
+            <span class="online">
               LIVE
             </span>
 
           </div>
 
-
           <div class="creator-info">
 
             <div>
 
-              <h3>
-                Mika Sato 🇯🇵
-              </h3>
+              <h3>Mina</h3>
 
-              <p>
-                @mika_live
-              </p>
-
+              <p>@mina_live</p>
 
               <div class="creator-location">
-
-                <span class="creator-flag">
-                  🇯🇵
-                </span>
-
-                Japan
-
+                <span class="creator-flag">🇨🇳</span>
+                China
               </div>
 
             </div>
 
-
             <span class="followers">
-              31K
+              37K
             </span>
 
           </div>
 
-
         </article>
 
-
       </div>
-
 
     </section>
 
 
-
-    <!-- ================================
+    <!-- =====================================================
          LIVE
-         ================================ -->
+         ===================================================== -->
 
-    <section
-      class="live-section"
-      id="live"
-    >
-
+    <section class="live-section" id="live">
 
       <div class="live-content">
-
 
         <span class="section-label">
           LIVE NOW
         </span>
 
-
         <h2>
-
           The internet,
-
-          <span>
-            live.
-          </span>
-
+          <span>live.</span>
         </h2>
 
-
         <p>
-
-          Watch creators broadcast in real time.
-          Join conversations. Discover new people.
-
+          Discover creators broadcasting in real time.
+          Find someone interesting and join the stream.
         </p>
-
 
         <button
           class="primary-button large"
-          onclick="showMessage('Live directory coming soon')"
+          onclick="window.location.href='./live.html'"
         >
-
           Explore live →
-
         </button>
-
 
       </div>
 
 
-
       <div class="live-panel">
-
 
         <div class="live-panel-top">
 
           <span class="live-indicator">
-
             <i></i>
-
             LIVE
-
           </span>
-
 
           <span>
             12 creators streaming
@@ -1266,197 +666,136 @@
         </div>
 
 
-
-        <!-- LIVE 01 -->
-
         <div class="live-row">
-
 
           <div class="avatar avatar-one"></div>
 
-
           <div class="live-user">
 
             <strong>
-              Yuki Tanaka 🇯🇵
+              Aiko
             </strong>
 
             <span>
-              2,431 watching
+              🇯🇵 Japan · 2,431 watching
             </span>
-
-            <small class="live-user-location">
-              Japan
-            </small>
 
           </div>
 
-
           <button
             class="watch-button"
-            onclick="showMessage('Opening Yuki live stream...')"
+            onclick="window.location.href='./live.html'"
           >
             Watch
           </button>
 
-
         </div>
 
 
-
-        <!-- LIVE 02 -->
-
         <div class="live-row">
-
 
           <div class="avatar avatar-two"></div>
 
-
           <div class="live-user">
 
             <strong>
-              Mei Lin 🇨🇳
+              Yuna
             </strong>
 
             <span>
-              1,824 watching
+              🇰🇷 South Korea · 1,824 watching
             </span>
-
-            <small class="live-user-location">
-              China
-            </small>
 
           </div>
 
-
           <button
             class="watch-button"
-            onclick="showMessage('Opening Mei live stream...')"
+            onclick="window.location.href='./live.html'"
           >
             Watch
           </button>
 
-
         </div>
 
-
-
-        <!-- LIVE 03 -->
 
         <div class="live-row">
 
-
           <div class="avatar avatar-three"></div>
-
 
           <div class="live-user">
 
             <strong>
-              Hana Kim 🇰🇷
+              Mei
             </strong>
 
             <span>
-              982 watching
+              🇨🇳 China · 982 watching
             </span>
-
-            <small class="live-user-location">
-              South Korea
-            </small>
 
           </div>
 
-
           <button
             class="watch-button"
-            onclick="showMessage('Opening Hana live stream...')"
+            onclick="window.location.href='./live.html'"
           >
             Watch
           </button>
 
-
         </div>
 
-
       </div>
-
 
     </section>
 
 
-
-    <!-- ================================
+    <!-- =====================================================
          CREATOR CTA
-         ================================ -->
+         ===================================================== -->
 
-    <section
-      class="creator-cta"
-      id="creators"
-    >
-
+    <section class="creator-cta" id="creators">
 
       <div class="cta-glow"></div>
 
-
       <div class="cta-content">
-
 
         <span class="section-label">
           FOR CREATORS
         </span>
 
-
         <h2>
-
           Your audience.
-
           <br>
-
           Your rules.
-
         </h2>
 
-
         <p>
-
-          Build your community, connect directly with fans
-          and own your creator journey.
-
+          Build your audience, connect with fans and create
+          your own community on DexFans.
         </p>
-
 
         <button
           class="primary-button large"
-          onclick="showMessage('Creator signup coming soon')"
+          onclick="showMessage('Creator registration coming soon')"
         >
-
           Start creating →
-
         </button>
 
-
       </div>
-
 
     </section>
 
 
-
-    <!-- ================================
+    <!-- =====================================================
          ABOUT
-         ================================ -->
+         ===================================================== -->
 
-    <section
-      class="about-section"
-      id="about"
-    >
-
+    <section class="about-section" id="about">
 
       <div>
 
         <span class="section-label">
           WHY DEXFANS
         </span>
-
 
         <h2>
           Built differently.
@@ -1465,88 +804,67 @@
       </div>
 
 
-
       <div class="features">
-
 
         <div class="feature">
 
-          <span>
-            01
-          </span>
+          <span>01</span>
 
           <h3>
             Creator first
           </h3>
 
           <p>
-
-            A platform designed around the people
-            who create the content.
-
+            A platform designed around creators
+            and their communities.
           </p>
 
         </div>
 
 
-
         <div class="feature">
 
-          <span>
-            02
-          </span>
+          <span>02</span>
 
           <h3>
             Direct connection
           </h3>
 
           <p>
-
-            Build genuine relationships with your
-            audience without unnecessary friction.
-
+            Connect directly with the people
+            you want to follow.
           </p>
 
         </div>
 
 
-
         <div class="feature">
 
-          <span>
-            03
-          </span>
+          <span>03</span>
 
           <h3>
             Next generation
           </h3>
 
           <p>
-
-            Modern infrastructure designed for the
-            future of digital creators.
-
+            Modern infrastructure built for
+            the future of digital creators.
           </p>
 
         </div>
 
-
       </div>
 
-
     </section>
-
 
   </main>
 
 
-
-  <!-- ================================
+  <!-- =====================================================
        FOOTER
-       ================================ -->
+       ===================================================== -->
 
   <footer>
-
 
     <div class="footer-logo">
 
@@ -1558,11 +876,9 @@
 
     </div>
 
-
     <p>
       © 2026 DexFans. The creator network.
     </p>
-
 
     <div class="footer-links">
 
@@ -1580,14 +896,12 @@
 
     </div>
 
-
   </footer>
 
 
-
-  <!-- ================================
+  <!-- =====================================================
        TOAST
-       ================================ -->
+       ===================================================== -->
 
   <div
     class="toast"
@@ -1598,7 +912,6 @@
       ◆
     </span>
 
-
     <p id="toastMessage">
       Coming soon
     </p>
@@ -1606,24 +919,22 @@
   </div>
 
 
-
-  <!-- ================================
+  <!-- =====================================================
        JAVASCRIPT
-       ================================ -->
+       ===================================================== -->
 
   <script>
-
 
     function scrollToSection(id) {
 
       const section =
         document.getElementById(id);
 
-
       if (section) {
 
         section.scrollIntoView({
-          behavior: "smooth"
+          behavior: "smooth",
+          block: "start"
         });
 
       }
@@ -1631,24 +942,19 @@
     }
 
 
-
     function showMessage(message) {
 
       const toast =
         document.getElementById("toast");
 
-
       const text =
         document.getElementById("toastMessage");
 
-
       text.textContent = message;
-
 
       toast.classList.add("show");
 
-
-      setTimeout(() => {
+      setTimeout(function () {
 
         toast.classList.remove("show");
 
@@ -1657,27 +963,23 @@
     }
 
 
-
     function toggleMenu() {
 
       const menu =
         document.getElementById("mobileNav");
-
 
       menu.classList.toggle("open");
 
     }
 
 
-
-    /* Smooth reveal animation */
+    /* Reveal sections */
 
     const observer =
       new IntersectionObserver(
+        function(entries) {
 
-        entries => {
-
-          entries.forEach(entry => {
+          entries.forEach(function(entry) {
 
             if (entry.isIntersecting) {
 
@@ -1688,11 +990,9 @@
           });
 
         },
-
         {
           threshold: 0.12
         }
-
       );
 
 
@@ -1700,7 +1000,7 @@
       .querySelectorAll(
         ".section, .live-section, .creator-cta, .about-section"
       )
-      .forEach(section => {
+      .forEach(function(section) {
 
         section.classList.add("reveal");
 
@@ -1709,8 +1009,32 @@
       });
 
 
-  </script>
+    /* Close mobile menu when clicking outside */
 
+    document.addEventListener(
+      "click",
+      function(event) {
+
+        const menu =
+          document.getElementById("mobileNav");
+
+        const button =
+          document.querySelector(".mobile-menu");
+
+        if (
+          menu.classList.contains("open") &&
+          !menu.contains(event.target) &&
+          !button.contains(event.target)
+        ) {
+
+          menu.classList.remove("open");
+
+        }
+
+      }
+    );
+
+  </script>
 
 </body>
 </html>
