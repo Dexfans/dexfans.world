@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <title>DexFans Wallet</title>
+
+  <link
+    rel="stylesheet"
+    href="/style.css"
+  >
+
+</head>
+
+<body>
+
+<header class="nav">
+
+  <a
+    href="/"
+    class="logo"
+  >
+    <span class="logo-mark">D</span>
+    DexFans
+  </a>
+
+</header>
+
+
+<main>
+
+<section class="section">
+
+  <span class="label">
+    WALLET
+  </span>
+
+  <h1>
+    Connect your Solana wallet.
+  </h1>
+
+  <p>
+    DexFans supports SOL and GOJIPOWER
+    payments on Solana.
+  </p>
+
+  <button
+    class="primary"
+    id="connect"
+  >
+    Connect Phantom
+  </button>
+
+  <div
+    id="wallet"
+    style="margin-top:30px;color:#777"
+  ></div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const button =
+  document.getElementById(
+    "connect"
+  );
+
+const output =
+  document.getElementById(
+    "wallet"
+  );
+
+button.onclick = async () => {
+
+  if (!window.solana) {
+
+    output.textContent =
+      "Install Phantom.";
+
+    return;
+  }
+
+  try {
+
+    const response =
+      await window.solana.connect();
+
+    const address =
+      response.publicKey.toString();
+
+    output.textContent =
+      address;
+
+    button.textContent =
+      "Connected";
+
+  } catch (error) {
+
+    output.textContent =
+      "Connection cancelled.";
+
+  }
+
+};
+
+</script>
+
+</body>
+
+</html>
