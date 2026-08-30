@@ -2,14 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { AppProvider } from "@solana/connector/react";
-
 import {
   getDefaultConfig,
   getDefaultMobileConfig
 } from "@solana/connector/headless";
 
 import App from "./App.jsx";
-
 import "./style.css";
 
 const connectorConfig = getDefaultConfig({
