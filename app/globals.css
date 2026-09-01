@@ -1021,3 +1021,148 @@ button {
     gap: 2px;
   }
 }
+/* =========================
+   AUTH
+========================= */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(131,56,236,.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255,0,110,.12),
+      transparent 35%
+    ),
+    #000;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 45px 35px;
+  border: 1px solid #292929;
+  border-radius: 18px;
+  background: #080808;
+  text-align: center;
+}
+
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.auth-tagline {
+  color: #888;
+  font-size: 13px;
+  margin: 10px 0 30px;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.auth-card input {
+  height: 46px;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  background: #151515;
+  color: white;
+  padding: 0 13px;
+  outline: none;
+}
+
+.auth-card input:focus {
+  border-color: #666;
+}
+
+.auth-submit {
+  height: 45px;
+  margin-top: 5px;
+  border-radius: 8px;
+  background: #0095f6;
+  color: white;
+  font-weight: 700;
+}
+
+.auth-message {
+  color: #ff6b9d;
+  font-size: 12px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #666;
+  font-size: 10px;
+  margin: 25px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  background: #292929;
+  flex: 1;
+}
+
+.social-login {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.signup-text {
+  color: #888;
+  font-size: 12px;
+  margin-top: 25px;
+}
+
+.signup-text a {
+  color: #0095f6;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.creator-box {
+  margin-top: 30px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #151515;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.creator-box strong,
+.creator-box span {
+  display: block;
+}
+
+.creator-box strong {
+  font-size: 12px;
+}
+
+.creator-box span {
+  color: #888;
+  font-size: 10px;
+  margin-top: 3px;
+}
