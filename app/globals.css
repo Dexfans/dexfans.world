@@ -1166,3 +1166,459 @@ button {
   font-size: 10px;
   margin-top: 3px;
 }
+/* =========================
+   DEXFANS SOCIAL APP
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  background: none;
+}
+
+.instagram-app {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 245px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #262626;
+  padding: 30px 18px;
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 45px;
+}
+
+.brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff006e, #8338ec, #0095f6);
+  font-weight: 900;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border-radius: 10px;
+  color: #aaa;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: #181818;
+  color: white;
+}
+
+.create-button {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.create-button:hover {
+  background: #181818;
+}
+
+/* FEED */
+
+.feed {
+  width: 630px;
+  margin-left: 245px;
+  padding: 30px 30px 80px;
+}
+
+.stories {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding: 5px 5px 25px;
+}
+
+.story {
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: 11px;
+  color: #bbb;
+}
+
+.story-avatar,
+.story-ring {
+  width: 66px;
+  height: 66px;
+  margin-bottom: 7px;
+  border-radius: 50%;
+}
+
+.story-ring {
+  padding: 3px;
+  background: linear-gradient(
+    135deg,
+    #ff006e,
+    #ffbe0b,
+    #8338ec
+  );
+}
+
+.story-ring img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #000;
+}
+
+.create-avatar {
+  background: #181818;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+}
+
+/* POSTS */
+
+.post {
+  border-bottom: 1px solid #262626;
+  padding-bottom: 28px;
+  margin-bottom: 28px;
+}
+
+.post-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+}
+
+.post-user img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-user strong,
+.post-user span {
+  display: block;
+}
+
+.post-user strong {
+  font-size: 13px;
+}
+
+.post-user span {
+  color: #777;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+.more {
+  color: #888;
+  font-size: 18px;
+}
+
+.post-image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: #111;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+.post-actions > div {
+  display: flex;
+  gap: 12px;
+}
+
+.action {
+  padding: 0;
+  color: white;
+}
+
+.action:hover {
+  color: #999;
+}
+
+.action.liked {
+  color: #ff3040;
+}
+
+.post-content {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.post-content p {
+  margin: 7px 0;
+}
+
+.comments {
+  color: #777;
+  font-size: 12px;
+  padding: 0;
+}
+
+/* RIGHT PANEL */
+
+.right-panel {
+  width: 330px;
+  padding: 55px 25px;
+  margin-left: 30px;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.account img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.account div {
+  flex: 1;
+}
+
+.account strong,
+.account span {
+  display: block;
+}
+
+.account strong {
+  font-size: 13px;
+}
+
+.account span {
+  color: #777;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.account button,
+.suggestion button {
+  color: #0095f6;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.suggestion-title {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  color: #777;
+  font-size: 12px;
+}
+
+.suggestion-title b {
+  color: white;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 15px;
+}
+
+.suggestion img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.suggestion div {
+  flex: 1;
+}
+
+.suggestion strong,
+.suggestion span {
+  display: block;
+}
+
+.suggestion strong {
+  font-size: 12px;
+}
+
+.suggestion span {
+  color: #666;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+/* MOBILE */
+
+.mobile-header,
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+
+  .right-panel {
+    display: none;
+  }
+
+  .feed {
+    margin: auto;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .mobile-header {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    padding: 0 18px;
+    background: #000;
+    border-bottom: 1px solid #262626;
+    z-index: 50;
+  }
+
+  .mobile-header .brand {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  .mobile-header .brand-icon {
+    width: 29px;
+    height: 29px;
+  }
+
+  .feed {
+    width: 100%;
+    margin: 0;
+    padding: 70px 0 80px;
+  }
+
+  .stories {
+    padding-left: 14px;
+  }
+
+  .post {
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+  }
+
+  .post-header {
+    padding: 0 12px;
+  }
+
+  .post-content {
+    padding: 0 12px;
+  }
+
+  .post-image {
+    border-radius: 0;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background: #000;
+    border-top: 1px solid #262626;
+    z-index: 50;
+  }
+
+  .mobile-nav a,
+  .mobile-nav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .mobile-nav button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #555;
+    border-radius: 8px;
+  }
+}
