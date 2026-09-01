@@ -445,3 +445,428 @@ a {
     border-radius: 8px;
   }
 }
+/* AUTH */
+
+.auth-page {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #262626;
+  background: #0b0b0b;
+  border-radius: 18px;
+  padding: 35px;
+}
+
+.auth-brand {
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 25px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-card input {
+  width: 100%;
+  background: #151515;
+  border: 1px solid #292929;
+  border-radius: 9px;
+  padding: 14px;
+  color: #fff;
+  outline: none;
+}
+
+.primary-button {
+  background: #0095f6;
+  color: #fff;
+  border-radius: 9px;
+  padding: 13px 18px;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #555;
+  margin: 25px 0;
+  font-size: 11px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  background: #292929;
+  flex: 1;
+}
+
+.wallet-button {
+  width: 100%;
+  border: 1px solid #333;
+  border-radius: 9px;
+  padding: 13px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.auth-footer {
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  margin-top: 25px;
+}
+
+.auth-footer a {
+  color: #0095f6;
+}
+
+.back-home {
+  color: #888;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+
+/* PROFILE */
+
+.profile-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 30px;
+}
+
+.profile-header {
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-settings {
+  font-size: 20px;
+}
+
+.profile-card {
+  max-width: 900px;
+  margin: 70px auto 45px;
+  display: flex;
+  gap: 60px;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  min-width: 150px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #ff006e,
+    #8338ec,
+    #0095f6
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 65px;
+  font-weight: 900;
+}
+
+.profile-main {
+  flex: 1;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-name-row h1 {
+  margin: 0;
+}
+
+.edit-profile {
+  background: #222;
+  border-radius: 8px;
+  padding: 9px 16px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 35px;
+  margin: 25px 0;
+}
+
+.profile-stats div {
+  display: flex;
+  gap: 6px;
+}
+
+.profile-stats span {
+  color: #999;
+}
+
+.profile-bio {
+  color: #bbb;
+  line-height: 1.6;
+}
+
+.profile-tabs {
+  max-width: 900px;
+  margin: auto;
+  border-top: 1px solid #262626;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+}
+
+.profile-tabs button {
+  padding: 18px 5px;
+  color: #777;
+}
+
+.profile-tabs .active {
+  color: #fff;
+  border-top: 2px solid #fff;
+}
+
+.empty-profile {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.empty-icon {
+  width: 70px;
+  height: 70px;
+  border: 2px solid #555;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-size: 35px;
+}
+
+.empty-profile h2 {
+  margin-bottom: 5px;
+}
+
+.empty-profile p {
+  color: #777;
+}
+
+
+/* EXPLORE */
+
+.explore-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+.explore-header {
+  height: 70px;
+  border-bottom: 1px solid #262626;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 0 30px;
+}
+
+.explore-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.explore-brand .brand-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.search-box {
+  width: 320px;
+  background: #181818;
+  border: 1px solid #292929;
+  border-radius: 10px;
+  padding: 12px 15px;
+  color: #fff;
+  outline: none;
+}
+
+.explore-profile {
+  margin-left: auto;
+  color: #fff;
+  text-decoration: none;
+}
+
+.explore-content {
+  max-width: 1100px;
+  margin: auto;
+  padding: 50px 25px 100px;
+}
+
+.explore-title h1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+
+.explore-title p {
+  color: #777;
+}
+
+.creator-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 35px;
+}
+
+.creator-card {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #111;
+}
+
+.creator-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .3s;
+}
+
+.creator-card:hover img {
+  transform: scale(1.04);
+}
+
+.creator-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 35px 15px 15px;
+  background: linear-gradient(
+    transparent,
+    rgba(0,0,0,.85)
+  );
+}
+
+.creator-overlay strong,
+.creator-overlay span {
+  display: block;
+}
+
+.creator-overlay span {
+  color: #aaa;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+
+@media (max-width: 700px) {
+
+  .profile-page {
+    padding: 20px 15px 80px;
+  }
+
+  .profile-card {
+    margin-top: 45px;
+    gap: 25px;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+    font-size: 40px;
+  }
+
+  .profile-name-row {
+    display: block;
+  }
+
+  .profile-name-row h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .profile-stats {
+    gap: 12px;
+    font-size: 12px;
+  }
+
+  .profile-bio {
+    font-size: 12px;
+  }
+
+  .profile-tabs {
+    gap: 35px;
+  }
+
+  .explore-header {
+    padding: 0 15px;
+  }
+
+  .search-box {
+    width: auto;
+    flex: 1;
+  }
+
+  .explore-profile {
+    display: none;
+  }
+
+  .creator-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background: #000;
+    border-top: 1px solid #262626;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 100;
+  }
+
+  .mobile-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px;
+  }
+}
