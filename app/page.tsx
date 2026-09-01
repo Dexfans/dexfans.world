@@ -1,91 +1,55 @@
 "use client";
 
-import { useState } from "react";
 import {
   Heart,
   MessageCircle,
   Send,
   Bookmark,
-  Home,
+  Plus,
   Search,
+  Home,
   Compass,
-  Film,
-  PlusSquare,
   User,
-  Menu,
-  MoreHorizontal,
-  Play,
-  Sparkles
+  Video
 } from "lucide-react";
 
-const stories = [
-  {
-    name: "dexfans",
-    image: "https://i.pravatar.cc/150?img=12"
-  },
-  {
-    name: "luna",
-    image: "https://i.pravatar.cc/150?img=47"
-  },
-  {
-    name: "mia",
-    image: "https://i.pravatar.cc/150?img=32"
-  },
-  {
-    name: "sophie",
-    image: "https://i.pravatar.cc/150?img=44"
-  },
-  {
-    name: "ava",
-    image: "https://i.pravatar.cc/150?img=49"
-  },
-  {
-    name: "ruby",
-    image: "https://i.pravatar.cc/150?img=25"
-  },
-  {
-    name: "emily",
-    image: "https://i.pravatar.cc/150?img=36"
-  }
-];
+import { useState } from "react";
 
 const posts = [
   {
     id: 1,
-    user: "Luna",
     username: "luna",
     avatar: "https://i.pravatar.cc/150?img=47",
-    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=90",
-    caption: "Welcome to my world ✨",
-    likes: 1824,
-    comments: 92
+    image:
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=90",
+    likes: "18,421",
+    caption:
+      "Welcome to my world ✨ New content dropping soon."
   },
   {
     id: 2,
-    user: "Mia",
-    username: "mia",
+    username: "maya",
     avatar: "https://i.pravatar.cc/150?img=32",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=90",
-    caption: "New content coming soon 🔥",
-    likes: 941,
-    comments: 41
+    image:
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=90",
+    likes: "9,842",
+    caption:
+      "Good vibes only 🖤"
   },
   {
     id: 3,
-    user: "Sophie",
-    username: "sophie",
+    username: "aria",
     avatar: "https://i.pravatar.cc/150?img=44",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=90",
-    caption: "Sunday mood.",
-    likes: 3210,
-    comments: 177
+    image:
+      "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=90",
+    likes: "24,901",
+    caption:
+      "Who is ready for the weekend?"
   }
 ];
 
 export default function HomePage() {
   const [liked, setLiked] = useState<number[]>([]);
-  const [saved, setSaved] = useState<number[]>([]);
-  const [active, setActive] = useState("Home");
 
   function toggleLike(id: number) {
     setLiked((current) =>
@@ -95,152 +59,146 @@ export default function HomePage() {
     );
   }
 
-  function toggleSave(id: number) {
-    setSaved((current) =>
-      current.includes(id)
-        ? current.filter((x) => x !== id)
-        : [...current, id]
-    );
-  }
-
   return (
-    <div className="app">
+    <main className="instagram-app">
 
-      <aside className="desktop-sidebar">
+      {/* DESKTOP SIDEBAR */}
+
+      <aside className="sidebar">
 
         <div className="brand">
-          <div className="brand-mark">D</div>
+          <div className="brand-icon">D</div>
           <span>DexFans</span>
         </div>
 
         <nav>
 
-          <NavItem
-            icon={<Home size={25} />}
-            text="Home"
-            active={active === "Home"}
-            onClick={() => setActive("Home")}
-          />
+          <a className="nav-item active" href="/">
+            <Home size={24} />
+            <span>Home</span>
+          </a>
 
-          <NavItem
-            icon={<Search size={25} />}
-            text="Search"
-            active={active === "Search"}
-            onClick={() => setActive("Search")}
-          />
+          <a className="nav-item" href="/explore">
+            <Compass size={24} />
+            <span>Explore</span>
+          </a>
 
-          <NavItem
-            icon={<Compass size={25} />}
-            text="Explore"
-            active={active === "Explore"}
-            onClick={() => setActive("Explore")}
-          />
+          <a className="nav-item" href="/login">
+            <Video size={24} />
+            <span>Live</span>
+          </a>
 
-          <NavItem
-            icon={<Film size={25} />}
-            text="Reels"
-            active={active === "Reels"}
-            onClick={() => setActive("Reels")}
-          />
-
-          <NavItem
-            icon={<MessageCircle size={25} />}
-            text="Messages"
-            active={active === "Messages"}
-            onClick={() => setActive("Messages")}
-          />
-
-          <NavItem
-            icon={<Heart size={25} />}
-            text="Notifications"
-            active={active === "Notifications"}
-            onClick={() => setActive("Notifications")}
-          />
-
-          <NavItem
-            icon={<PlusSquare size={25} />}
-            text="Create"
-            active={active === "Create"}
-            onClick={() => setActive("Create")}
-          />
-
-          <NavItem
-            icon={<User size={25} />}
-            text="Profile"
-            active={active === "Profile"}
-            onClick={() => setActive("Profile")}
-          />
+          <a className="nav-item" href="/profile">
+            <User size={24} />
+            <span>Profile</span>
+          </a>
 
         </nav>
 
-        <div className="sidebar-bottom">
-
-          <div className="goji-card">
-            <Sparkles size={18} />
-            <div>
-              <strong>GOJI POWER</strong>
-              <small>Creator economy</small>
-            </div>
-          </div>
-
-          <NavItem
-            icon={<Menu size={25} />}
-            text="More"
-            active={false}
-            onClick={() => {}}
-          />
-
-        </div>
+        <button className="create-button">
+          <Plus size={22} />
+          Create
+        </button>
 
       </aside>
+
+
+      {/* MOBILE TOP BAR */}
 
       <header className="mobile-header">
 
         <div className="brand">
-          <div className="brand-mark">D</div>
+          <div className="brand-icon">D</div>
           <span>DexFans</span>
         </div>
 
-        <div className="mobile-actions">
-          <Heart size={24} />
-          <MessageCircle size={24} />
-        </div>
+        <Search size={23} />
 
       </header>
 
-      <main className="main">
 
-        <section className="feed">
+      {/* MAIN FEED */}
 
-          <Stories />
+      <section className="feed">
 
-          <div className="feed-header">
-            <span>For you</span>
-            <button>Following</button>
+        <div className="stories">
+
+          <div className="story create-story">
+
+            <div className="story-avatar create-avatar">
+              <Plus size={20} />
+            </div>
+
+            <span>Your story</span>
+
           </div>
 
-          {posts.map((post) => (
+          {[
+            ["luna", 47],
+            ["maya", 32],
+            ["aria", 44],
+            ["sophie", 25],
+            ["mia", 12],
+            ["jade", 18]
+          ].map(([name, img]) => (
+
+            <div className="story" key={String(name)}>
+
+              <div className="story-ring">
+
+                <img
+                  src={`https://i.pravatar.cc/150?img=${img}`}
+                  alt=""
+                />
+
+              </div>
+
+              <span>{name}</span>
+
+            </div>
+
+          ))}
+
+        </div>
+
+
+        {posts.map((post) => {
+
+          const isLiked = liked.includes(post.id);
+
+          return (
+
             <article className="post" key={post.id}>
 
-              <div className="post-header">
+              <header className="post-header">
 
-                <div className="post-user">
+                <a href="/profile" className="post-user">
 
                   <img
                     src={post.avatar}
-                    alt={post.username}
+                    alt=""
                   />
 
                   <div>
-                    <strong>{post.username}</strong>
-                    <small>Creator</small>
+
+                    <strong>
+                      {post.username}
+                    </strong>
+
+                    <span>
+                      Creator
+                    </span>
+
                   </div>
 
-                </div>
+                </a>
 
-                <MoreHorizontal size={22} />
+                <button className="more">
+                  •••
+                </button>
 
-              </div>
+              </header>
+
 
               <div className="post-image">
 
@@ -249,56 +207,64 @@ export default function HomePage() {
                   alt=""
                 />
 
-                <button className="image-play">
-                  <Play size={18} fill="white" />
-                </button>
-
               </div>
+
 
               <div className="post-actions">
 
-                <div className="left-actions">
+                <div>
 
-                  <button onClick={() => toggleLike(post.id)}>
+                  <button
+                    onClick={() =>
+                      toggleLike(post.id)
+                    }
+                    className={
+                      isLiked
+                        ? "action liked"
+                        : "action"
+                    }
+                  >
+
                     <Heart
-                      size={25}
+                      size={26}
                       fill={
-                        liked.includes(post.id)
+                        isLiked
                           ? "currentColor"
                           : "none"
                       }
                     />
+
                   </button>
 
-                  <button>
-                    <MessageCircle size={25} />
+                  <button className="action">
+
+                    <MessageCircle
+                      size={26}
+                    />
+
                   </button>
 
-                  <button>
+                  <button className="action">
+
                     <Send size={25} />
+
                   </button>
 
                 </div>
 
-                <button onClick={() => toggleSave(post.id)}>
-                  <Bookmark
-                    size={25}
-                    fill={
-                      saved.includes(post.id)
-                        ? "currentColor"
-                        : "none"
-                    }
-                  />
+                <button className="action">
+
+                  <Bookmark size={26} />
+
                 </button>
 
               </div>
 
-              <div className="post-info">
+
+              <div className="post-content">
 
                 <strong>
-                  {post.likes +
-                    (liked.includes(post.id) ? 1 : 0)
-                  } likes
+                  {post.likes} likes
                 </strong>
 
                 <p>
@@ -307,140 +273,115 @@ export default function HomePage() {
                 </p>
 
                 <button className="comments">
-                  View all {post.comments} comments
+                  View all comments
                 </button>
-
-                <div className="comment-box">
-                  <input placeholder="Add a comment..." />
-                  <button>Post</button>
-                </div>
 
               </div>
 
             </article>
-          ))}
 
-        </section>
+          );
 
-        <aside className="right-sidebar">
+        })}
 
-          <div className="my-profile">
+      </section>
+
+
+      {/* RIGHT SIDE */}
+
+      <aside className="right-panel">
+
+        <div className="account">
+
+          <img
+            src="https://i.pravatar.cc/150?img=11"
+            alt=""
+          />
+
+          <div>
+
+            <strong>dexfans</strong>
+
+            <span>DexFans.world</span>
+
+          </div>
+
+          <button>
+            Switch
+          </button>
+
+        </div>
+
+        <div className="suggestion-title">
+
+          <span>Suggested for you</span>
+
+          <b>See All</b>
+
+        </div>
+
+        {[
+          ["nova", 36],
+          ["bella", 21],
+          ["ruby", 48],
+          ["sky", 29],
+          ["zoe", 39]
+        ].map(([name, img]) => (
+
+          <div className="suggestion" key={String(name)}>
 
             <img
-              src="https://i.pravatar.cc/150?img=12"
+              src={`https://i.pravatar.cc/150?img=${img}`}
               alt=""
             />
 
             <div>
-              <strong>dexfans</strong>
-              <span>DexFans World</span>
-            </div>
 
-            <button>Switch</button>
+              <strong>{name}</strong>
 
-          </div>
-
-          <div className="suggestion-header">
-            <strong>Suggested for you</strong>
-            <button>See All</button>
-          </div>
-
-          {stories.slice(1, 6).map((story) => (
-
-            <div className="suggestion" key={story.name}>
-
-              <img
-                src={story.image}
-                alt=""
-              />
-
-              <div>
-                <strong>{story.name}</strong>
-                <span>Suggested for you</span>
-              </div>
-
-              <button>Follow</button>
+              <span>
+                Suggested for you
+              </span>
 
             </div>
 
-          ))}
+            <button>
+              Follow
+            </button>
 
-          <div className="footer-links">
-            About · Help · Press · API · Jobs · Privacy ·
-            Terms · Locations
           </div>
 
-          <small className="copyright">
-            © 2026 DEXFANS
-          </small>
+        ))}
 
-        </aside>
+      </aside>
 
-      </main>
+
+      {/* MOBILE NAV */}
 
       <nav className="mobile-nav">
 
-        <Home size={24} />
-        <Search size={24} />
-        <PlusSquare size={24} />
-        <Film size={24} />
-        <User size={24} />
+        <a href="/">
+          <Home size={23} />
+        </a>
+
+        <a href="/explore">
+          <Search size={23} />
+        </a>
+
+        <button>
+          <Plus size={25} />
+        </button>
+
+        <a href="/login">
+          <Video size={23} />
+        </a>
+
+        <a href="/profile">
+          <User size={23} />
+        </a>
 
       </nav>
 
-    </div>
-  );
-}
-
-function NavItem({
-  icon,
-  text,
-  active,
-  onClick
-}: {
-  icon: React.ReactNode;
-  text: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className={`nav-item ${active ? "active" : ""}`}
-      onClick={onClick}
-    >
-      {icon}
-      <span>{text}</span>
-    </button>
-  );
-}
-
-function Stories() {
-  return (
-    <div className="stories">
-
-      {stories.map((story, index) => (
-
-        <div className="story" key={story.name}>
-
-          <div className="story-ring">
-
-            <img
-              src={story.image}
-              alt={story.name}
-            />
-
-            {index === 0 && (
-              <div className="story-plus">+</div>
-            )}
-
-          </div>
-
-          <span>{story.name}</span>
-
-        </div>
-
-      ))}
-
-    </div>
+    </main>
   );
 }
