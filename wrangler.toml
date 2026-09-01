@@ -1,0 +1,8 @@
+name = "dexfans-api"
+main = "src/index.js"
+compatibility_date = "2026-09-02"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dexfans-db"
+database_id = "YOUR_DATABASE_ID"
