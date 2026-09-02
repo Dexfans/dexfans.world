@@ -14,6 +14,7 @@ export default function ProfilePage() {
 
   async function createProfile(e: React.FormEvent) {
     e.preventDefault();
+
     setLoading(true);
     setMessage("");
 
@@ -24,9 +25,9 @@ export default function ProfilePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username,
-          displayName,
-          bio,
+          username: username.trim(),
+          displayName: displayName.trim(),
+          bio: bio.trim(),
         }),
       });
 
@@ -37,36 +38,97 @@ export default function ProfilePage() {
         return;
       }
 
-      localStorage.setItem("dexfans_user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "dexfans_user",
+        JSON.stringify(data.user)
+      );
 
-      setMessage("Profile created successfully.");
-    } catch {
-      setMessage("Could not connect to DexFans API.");
+      setMessage("✅ Profile created successfully!");
+
+      setUsername("");
+      setDisplayName("");
+      setBio("");
+
+    } catch (error) {
+      setMessage("❌ Could not connect to DexFans API.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="profile-page">
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#000",
+        color: "#fff",
+        padding: "30px 20px",
+      }}
+    >
 
-      <header className="profile-header">
-        <Link href="/" className="back-home">
+      <div
+        style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+        }}
+      >
+
+        <Link
+          href="/"
+          style={{
+            color: "#999",
+            textDecoration: "none",
+            fontSize: "14px",
+          }}
+        >
           ← DexFans
         </Link>
-      </header>
 
-      <section className="profile-card">
+        <div
+          style={{
+            marginTop: "50px",
+            background: "#0b0b0b",
+            border: "1px solid #292929",
+            borderRadius: "20px",
+            padding: "30px",
+          }}
+        >
 
-        <div className="profile-avatar">
-          {username ? username.charAt(0).toUpperCase() : "D"}
-        </div>
+          <div
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              background:
+                "linear-gradient(135deg,#ff006e,#8338ec,#0095f6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "40px",
+              fontWeight: "800",
+              marginBottom: "25px",
+            }}
+          >
+            {username
+              ? username.charAt(0).toUpperCase()
+              : "D"}
+          </div>
 
-        <div className="profile-main">
+          <h1
+            style={{
+              fontSize: "28px",
+              marginBottom: "8px",
+            }}
+          >
+            Create your DexFans profile
+          </h1>
 
-          <h1>Create your DexFans profile</h1>
-
-          <p className="profile-bio">
+          <p
+            style={{
+              color: "#888",
+              marginBottom: "30px",
+            }}
+          >
             Create your identity on DexFans.
           </p>
 
@@ -75,9 +137,7 @@ export default function ProfilePage() {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "12px",
-              maxWidth: "450px",
-              marginTop: "25px",
+              gap: "15px",
             }}
           >
 
@@ -85,45 +145,89 @@ export default function ProfilePage() {
               type="text"
               placeholder="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) =>
+                setUsername(e.target.value)
+              }
               required
               minLength={3}
+              style={inputStyle}
             />
 
             <input
               type="text"
               placeholder="Display name"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={(e) =>
+                setDisplayName(e.target.value)
+              }
+              style={inputStyle}
             />
 
             <textarea
-              placeholder="Bio"
+              placeholder="Tell people about yourself..."
               value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              rows={4}
+              onChange={(e) =>
+                setBio(e.target.value)
+              }
+              rows={5}
+              style={{
+                ...inputStyle,
+                resize: "vertical",
+              }}
             />
 
             <button
-              className="primary-button"
               type="submit"
               disabled={loading}
+              style={{
+                background: "#0095f6",
+                color: "#fff",
+                border: "none",
+                borderRadius: "10px",
+                padding: "15px",
+                fontSize: "16px",
+                fontWeight: "700",
+                cursor: "pointer",
+                opacity: loading ? 0.6 : 1,
+              }}
             >
-              {loading ? "Creating..." : "Create profile"}
+              {loading
+                ? "Creating profile..."
+                : "Create profile"}
             </button>
 
           </form>
 
           {message && (
-            <p style={{ marginTop: "20px" }}>
+            <div
+              style={{
+                marginTop: "20px",
+                padding: "15px",
+                background: "#151515",
+                borderRadius: "10px",
+                color: "#fff",
+              }}
+            >
               {message}
-            </p>
+            </div>
           )}
 
         </div>
 
-      </section>
+      </div>
 
     </main>
   );
 }
+
+const inputStyle = {
+  width: "100%",
+  boxSizing: "border-box" as const,
+  background: "#151515",
+  color: "#fff",
+  border: "1px solid #333",
+  borderRadius: "10px",
+  padding: "15px",
+  fontSize: "15px",
+  outline: "none",
+};
