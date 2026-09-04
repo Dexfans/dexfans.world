@@ -1,42 +1,49 @@
 "use client";
 
 import {
+  useEffect,
+  useState,
+  ChangeEvent,
+} from "react";
+import Link from "next/link";
+import {
   ArrowLeft,
   Settings,
-  Camera,
   Grid3X3,
-  Lock,
-  Edit3,
-  LogOut,
+  Video,
+  Bookmark,
+  User,
+  X,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
-import { useEffect, useState } from "react";
-
-const API =
-  "https://dexfans-api.dwf6zb4bd.workers.dev";
-
-type User = {
+type UserType = {
   id: number;
   username: string;
-  display_name: string;
-  email?: string;
+  display_name?: string;
   bio?: string;
   avatar_url?: string;
+  email?: string;
 };
 
 type Post = {
   id: number;
   user_id: number;
-  username: string;
-  display_name: string;
+  username?: string;
+  display_name?: string;
+  avatar_url?: string;
   caption?: string;
   media_url?: string;
-  created_at: string;
+  created_at?: string;
+  likes_count?: number;
+  comments_count?: number;
 };
 
 export default function MyProfilePage() {
   const [user, setUser] =
-    useState<User | null>(null);
+    useState<UserType | null>(null);
 
   const [posts, setPosts] =
     useState<Post[]>([]);
@@ -44,7 +51,7 @@ export default function MyProfilePage() {
   const [loading, setLoading] =
     useState(true);
 
-  const [editing, setEditing] =
+  const [showEdit, setShowEdit] =
     useState(false);
 
   const [displayName, setDisplayName] =
@@ -56,66 +63,226 @@ export default function MyProfilePage() {
   const [avatarUrl, setAvatarUrl] =
     useState("");
 
+  const [avatarFile, setAvatarFile] =
+    useState<File | null>(null);
+
+  const [avatarPreview, setAvatarPreview] =
+    useState("");
+
   const [saving, setSaving] =
     useState(false);
 
+  const [selectedPost, setSelectedPost] =
+    useState<Post | null>(null);
+
   useEffect(() => {
-    const saved =
-      localStorage.getItem("dexfans_user");
-
-    if (!saved) {
-      window.location.href = "/login";
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(saved);
-
-      setUser(parsed);
-      setDisplayName(
-        parsed.display_name ||
-          parsed.username ||
-          ""
-      );
-      setBio(parsed.bio || "");
-      setAvatarUrl(parsed.avatar_url || "");
-
-      loadPosts(parsed.id);
-    } catch {
-      localStorage.removeItem(
-        "dexfans_user"
-      );
-
-      window.location.href = "/login";
-    }
+    loadProfile();
   }, []);
 
-  async function loadPosts(
-    userId: number
-  ) {
+  async function loadProfile() {
     try {
-      const response = await fetch(
-        `${API}/api/posts?user_id=${userId}`
-      );
+      const stored =
+        localStorage.getItem(
+          "dexfans_user"
+        );
 
-      if (!response.ok) {
-        setLoading(false);
+      if (!stored) {
+        window.location.href = "/login";
         return;
       }
 
-      const data =
-        await response.json();
+      const storedUser: UserType =
+        JSON.parse(stored);
 
-      if (
-        data.success &&
-        Array.isArray(data.posts)
-      ) {
-        setPosts(data.posts);
+      setUser(storedUser);
+
+      setDisplayName(
+        storedUser.display_name || ""
+      );
+
+      setBio(storedUser.bio || "");
+
+      setAvatarUrl(
+        storedUser.avatar_url || ""
+      );
+
+      const data =
+        await apiFetch<{
+          success: boolean;
+          user: UserType;
+          posts: Post[];
+        }>(
+          `/api/users/${encodeURIComponent(
+            storedUser.username
+          )}`
+        );
+
+      if (data.user) {
+        setUser(data.user);
+
+        setDisplayName(
+          data.user.display_name || ""
+        );
+
+        setBio(
+          data.user.bio || ""
+        );
+
+        setAvatarUrl(
+          data.user.avatar_url || ""
+        );
+
+        localStorage.setItem(
+          "dexfans_user",
+          JSON.stringify(data.user)
+        );
       }
+
+      setPosts(data.posts || []);
     } catch {
+      try {
+        const stored =
+          localStorage.getItem(
+            "dexfans_user"
+          );
+
+        if (stored) {
+          const storedUser =
+            JSON.parse(stored);
+
+          const postData =
+            await apiFetch<{
+              success: boolean;
+              posts: Post[];
+            }>(
+              `/api/posts?user_id=${storedUser.id}`
+            );
+
+          setPosts(
+            postData.posts || []
+          );
+        }
+      } catch {}
     } finally {
       setLoading(false);
     }
+  }
+
+  function openEdit() {
+    setDisplayName(
+      user?.display_name || ""
+    );
+
+    setBio(user?.bio || "");
+
+    setAvatarUrl(
+      user?.avatar_url || ""
+    );
+
+    setAvatarFile(null);
+    setAvatarPreview("");
+
+    setShowEdit(true);
+  }
+
+  function closeEdit() {
+    if (saving) return;
+
+    if (avatarPreview) {
+      URL.revokeObjectURL(
+        avatarPreview
+      );
+    }
+
+    setAvatarPreview("");
+    setAvatarFile(null);
+    setShowEdit(false);
+  }
+
+  function handleAvatarChange(
+    event: ChangeEvent<HTMLInputElement>
+  ) {
+    const file =
+      event.target.files?.[0];
+
+    if (!file) return;
+
+    const allowed = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
+
+    if (!allowed.includes(file.type)) {
+      alert(
+        "Please choose a JPG, PNG, WEBP or GIF image."
+      );
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert(
+        "Profile pictures must be under 10MB."
+      );
+      return;
+    }
+
+    if (avatarPreview) {
+      URL.revokeObjectURL(
+        avatarPreview
+      );
+    }
+
+    setAvatarFile(file);
+
+    setAvatarPreview(
+      URL.createObjectURL(file)
+    );
+  }
+
+  async function uploadAvatar() {
+    if (!avatarFile) {
+      return avatarUrl;
+    }
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      avatarFile
+    );
+
+    const response =
+      await fetch(
+        "https://dexfans-api.dwf6zb4bd.workers.dev/api/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Avatar upload failed"
+      );
+    }
+
+    const data =
+      await response.json();
+
+    if (
+      !data.success ||
+      !data.url
+    ) {
+      throw new Error(
+        data.error ||
+          "Avatar upload failed"
+      );
+    }
+
+    return data.url;
   }
 
   async function saveProfile() {
@@ -124,35 +291,36 @@ export default function MyProfilePage() {
     setSaving(true);
 
     try {
-      const response = await fetch(
-        `${API}/api/users/${encodeURIComponent(
-          user.username
-        )}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            displayName:
-              displayName.trim(),
-            bio: bio.trim(),
-            avatarUrl:
-              avatarUrl.trim(),
-          }),
-        }
-      );
+      /*
+       * Upload new avatar to R2
+       */
+
+      const newAvatarUrl =
+        await uploadAvatar();
+
+      /*
+       * Update profile in D1
+       */
 
       const data =
-        await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(
-          data.error ||
-            "Could not update profile"
+        await apiFetch<{
+          success: boolean;
+          user: UserType;
+        }>(
+          `/api/users/${encodeURIComponent(
+            user.username
+          )}`,
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              displayName:
+                displayName.trim(),
+              bio: bio.trim(),
+              avatarUrl:
+                newAvatarUrl || "",
+            }),
+          }
         );
-      }
 
       const updatedUser =
         data.user || {
@@ -161,41 +329,66 @@ export default function MyProfilePage() {
             displayName.trim(),
           bio: bio.trim(),
           avatar_url:
-            avatarUrl.trim(),
+            newAvatarUrl || "",
         };
 
       setUser(updatedUser);
 
       localStorage.setItem(
         "dexfans_user",
-        JSON.stringify(updatedUser)
+        JSON.stringify(
+          updatedUser
+        )
       );
 
-      setEditing(false);
-    } catch {
+      setAvatarUrl(
+        updatedUser.avatar_url || ""
+      );
+
+      setAvatarFile(null);
+
+      if (avatarPreview) {
+        URL.revokeObjectURL(
+          avatarPreview
+        );
+      }
+
+      setAvatarPreview("");
+
+      setShowEdit(false);
+    } catch (error) {
+      console.error(error);
+
       /*
-       * Keep the local profile usable even
-       * if the API update endpoint isn't
-       * deployed yet.
+       * Keep local profile usable even
+       * if the API is temporarily unavailable.
        */
 
-      const updatedUser = {
+      const fallbackUser = {
         ...user,
         display_name:
           displayName.trim(),
         bio: bio.trim(),
         avatar_url:
-          avatarUrl.trim(),
+          avatarFile
+            ? avatarPreview
+            : avatarUrl,
       };
 
-      setUser(updatedUser);
+      setUser(fallbackUser);
 
       localStorage.setItem(
         "dexfans_user",
-        JSON.stringify(updatedUser)
+        JSON.stringify(
+          fallbackUser
+        )
       );
 
-      setEditing(false);
+      setShowEdit(false);
+
+      alert(
+        "Profile saved locally. The server update could not be completed."
+      );
     } finally {
       setSaving(false);
     }
@@ -211,190 +404,264 @@ export default function MyProfilePage() {
 
   if (loading) {
     return (
-      <main className="my-profile-loading">
-        <div className="profile-spinner" />
+      <main className="profile-loading">
+        Loading profile...
       </main>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  const avatar =
+    avatarPreview ||
+    user?.avatar_url ||
+    "";
 
   return (
     <main className="my-profile-page">
 
-      {/* HEADER */}
+      {/* TOP BAR */}
 
-      <header className="my-profile-topbar">
+      <header className="profile-topbar">
 
-        <a href="/">
-          <ArrowLeft size={23} />
-        </a>
+        <Link
+          href="/"
+          className="profile-back"
+        >
+          <ArrowLeft size={22} />
+        </Link>
 
         <strong>
-          @{user.username}
+          {user?.username ||
+            "Profile"}
         </strong>
 
         <button
-          onClick={() =>
-            setEditing(true)
-          }
+          className="profile-settings"
+          onClick={openEdit}
         >
-          <Settings size={21} />
+          <Settings size={22} />
         </button>
 
       </header>
 
-      {/* PROFILE */}
 
-      <section className="my-profile-header">
+      {/* PROFILE HEADER */}
 
-        <div className="my-profile-main">
+      <section className="profile-header">
 
-          <div className="my-profile-avatar">
+        <div className="profile-avatar-large">
 
-            {user.avatar_url ? (
-              <img
-                src={user.avatar_url}
-                alt=""
-              />
-            ) : (
-              <span>
-                {user.username
-                  .charAt(0)
-                  .toUpperCase()}
-              </span>
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={
+                user?.username ||
+                "Profile"
+              }
+            />
+          ) : (
+            <div className="avatar-placeholder large">
+              {(
+                user?.display_name ||
+                user?.username ||
+                "D"
+              )
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+          )}
+
+        </div>
+
+
+        <div className="profile-info">
+
+          <div className="profile-name-row">
+
+            <h1>
+              {user?.display_name ||
+                user?.username ||
+                "DexFans User"}
+            </h1>
+
+            <button
+              className="edit-profile-button"
+              onClick={openEdit}
+            >
+              Edit profile
+            </button>
+
+            <button
+              className="profile-settings-desktop"
+              onClick={openEdit}
+            >
+              <Settings size={20} />
+            </button>
+
+          </div>
+
+
+          <div className="profile-stats">
+
+            <span>
+              <strong>
+                {posts.length}
+              </strong>{" "}
+              posts
+            </span>
+
+            <span>
+              <strong>0</strong>{" "}
+              followers
+            </span>
+
+            <span>
+              <strong>0</strong>{" "}
+              following
+            </span>
+
+          </div>
+
+
+          <div className="profile-bio">
+
+            <strong>
+              @{user?.username}
+            </strong>
+
+            {user?.bio && (
+              <p>
+                {user.bio}
+              </p>
             )}
 
           </div>
-
-          <div className="my-profile-info">
-
-            <h1>
-              {user.display_name ||
-                user.username}
-            </h1>
-
-            <p>
-              @{user.username}
-            </p>
-
-            <div className="my-profile-bio">
-              {user.bio ||
-                "No bio yet. Tell your fans about yourself."}
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* STATS */}
-
-        <div className="my-profile-stats">
-
-          <div>
-            <strong>
-              {posts.length}
-            </strong>
-
-            <span>Posts</span>
-          </div>
-
-          <div>
-            <strong>0</strong>
-
-            <span>Followers</span>
-          </div>
-
-          <div>
-            <strong>0</strong>
-
-            <span>Following</span>
-          </div>
-
-        </div>
-
-        {/* BUTTONS */}
-
-        <div className="my-profile-actions">
-
-          <button
-            onClick={() =>
-              setEditing(true)
-            }
-          >
-            <Edit3 size={16} />
-            Edit profile
-          </button>
-
-          <button
-            onClick={() =>
-              alert(
-                "Creator tools are coming next."
-              )
-            }
-          >
-            Creator tools
-          </button>
-
-          <button
-            onClick={logout}
-            className="logout-button"
-          >
-            <LogOut size={16} />
-            Log out
-          </button>
 
         </div>
 
       </section>
 
-      {/* TABS */}
 
-      <div className="my-profile-tabs">
+      {/* PROFILE ACTIONS */}
 
-        <button className="active">
-          <Grid3X3 size={20} />
-          Posts
+      <div className="profile-action-row">
+
+        <button
+          className="profile-action-button"
+          onClick={openEdit}
+        >
+          Edit profile
         </button>
 
-        <button>
-          <Lock size={19} />
-          Exclusive
+        <Link
+          href="/live"
+          className="profile-action-button"
+        >
+          Go Live
+        </Link>
+
+      </div>
+
+
+      {/* CREATOR TOOLS */}
+
+      <section className="creator-tools">
+
+        <div className="creator-tools-header">
+
+          <div>
+            <span className="creator-tools-label">
+              CREATOR TOOLS
+            </span>
+
+            <h2>
+              Build your audience
+            </h2>
+          </div>
+
+        </div>
+
+        <div className="creator-tools-grid">
+
+          <div className="creator-tool-card">
+            <strong>
+              Content
+            </strong>
+            <span>
+              Manage your posts
+            </span>
+          </div>
+
+          <div className="creator-tool-card">
+            <strong>
+              Live
+            </strong>
+            <span>
+              Start a live stream
+            </span>
+          </div>
+
+          <div className="creator-tool-card">
+            <strong>
+              Earnings
+            </strong>
+            <span>
+              Coming soon
+            </span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* POSTS TABS */}
+
+      <div className="profile-tabs">
+
+        <button className="profile-tab active">
+          <Grid3X3 size={18} />
+          POSTS
+        </button>
+
+        <button className="profile-tab">
+          <Video size={18} />
+          LIVE
+        </button>
+
+        <button className="profile-tab">
+          <Bookmark size={18} />
+          SAVED
         </button>
 
       </div>
 
-      {/* POSTS */}
 
-      <section className="my-profile-grid">
+      {/* POST GRID */}
+
+      <section className="profile-grid">
 
         {posts.length === 0 ? (
 
           <div className="empty-profile">
 
-            <div>
-              <Camera size={38} />
+            <div className="empty-profile-icon">
+              <Grid3X3 size={35} />
             </div>
 
             <h2>
-              Share your first post
+              No posts yet
             </h2>
 
             <p>
-              Create content and start
-              building your audience.
+              Your posts will appear here.
             </p>
 
-            <button
-              onClick={() =>
-                (window.location.href =
-                  "/")
-              }
+            <Link
+              href="/"
+              className="empty-profile-button"
             >
-              Create post
-            </button>
+              Create your first post
+            </Link>
 
           </div>
 
@@ -402,23 +669,35 @@ export default function MyProfilePage() {
 
           posts.map((post) => (
 
-            <article
-              className="my-profile-post"
+            <button
               key={post.id}
+              className="profile-grid-item"
+              onClick={() =>
+                setSelectedPost(post)
+              }
             >
 
               {post.media_url ? (
+
                 <img
-                  src={post.media_url}
-                  alt=""
+                  src={
+                    post.media_url
+                  }
+                  alt={
+                    post.caption ||
+                    "Post"
+                  }
                 />
+
               ) : (
-                <div>
+
+                <div className="grid-text-post">
                   {post.caption}
                 </div>
+
               )}
 
-            </article>
+            </button>
 
           ))
 
@@ -426,68 +705,110 @@ export default function MyProfilePage() {
 
       </section>
 
-      {/* EDIT MODAL */}
 
-      {editing && (
+      {/* LOGOUT */}
 
-        <div className="edit-profile-overlay">
+      <div className="profile-logout-area">
 
-          <div className="edit-profile-modal">
+        <button
+          onClick={logout}
+          className="logout-button"
+        >
+          Log out
+        </button>
 
-            <header>
+      </div>
 
-              <h2>
+
+      {/* EDIT PROFILE MODAL */}
+
+      {showEdit && (
+
+        <div className="profile-modal-overlay">
+
+          <div className="profile-edit-modal">
+
+            <div className="profile-modal-header">
+
+              <strong>
                 Edit profile
-              </h2>
+              </strong>
 
               <button
-                onClick={() =>
-                  setEditing(false)
-                }
+                onClick={closeEdit}
+                disabled={saving}
               >
-                ×
+                <X size={22} />
               </button>
-
-            </header>
-
-            {/* AVATAR */}
-
-            <div className="edit-avatar">
-
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt=""
-                />
-              ) : (
-                <span>
-                  {user.username
-                    .charAt(0)
-                    .toUpperCase()}
-                </span>
-              )}
-
-              <label>
-                <Camera size={17} />
-                Change photo
-
-                <input
-                  type="text"
-                  value={avatarUrl}
-                  onChange={(e) =>
-                    setAvatarUrl(
-                      e.target.value
-                    )
-                  }
-                  placeholder="Image URL"
-                />
-              </label>
 
             </div>
 
-            {/* DISPLAY NAME */}
 
-            <label className="edit-field">
+            {/* AVATAR */}
+
+            <div className="avatar-upload-section">
+
+              <div className="avatar-upload-preview">
+
+                {avatarPreview ||
+                avatarUrl ? (
+
+                  <img
+                    src={
+                      avatarPreview ||
+                      avatarUrl
+                    }
+                    alt="Avatar"
+                  />
+
+                ) : (
+
+                  <div className="avatar-placeholder upload-avatar">
+                    {(
+                      user?.display_name ||
+                      user?.username ||
+                      "D"
+                    )
+                      .charAt(0)
+                      .toUpperCase()}
+                  </div>
+
+                )}
+
+              </div>
+
+
+              <label className="avatar-upload-button">
+
+                <Upload size={17} />
+
+                <span>
+                  Change profile photo
+                </span>
+
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={
+                    handleAvatarChange
+                  }
+                  hidden
+                />
+
+              </label>
+
+              {avatarFile && (
+                <span className="avatar-file-name">
+                  {avatarFile.name}
+                </span>
+              )}
+
+            </div>
+
+
+            {/* FORM */}
+
+            <label className="profile-field">
 
               <span>
                 Display name
@@ -500,30 +821,30 @@ export default function MyProfilePage() {
                     e.target.value
                   )
                 }
+                maxLength={80}
                 placeholder="Your name"
-                maxLength={50}
               />
 
             </label>
 
-            {/* USERNAME */}
 
-            <label className="edit-field">
+            <label className="profile-field">
 
               <span>
                 Username
               </span>
 
               <input
-                value={`@${user.username}`}
+                value={
+                  user?.username || ""
+                }
                 disabled
               />
 
             </label>
 
-            {/* BIO */}
 
-            <label className="edit-field">
+            <label className="profile-field">
 
               <span>
                 Bio
@@ -532,34 +853,115 @@ export default function MyProfilePage() {
               <textarea
                 value={bio}
                 onChange={(e) =>
-                  setBio(e.target.value)
+                  setBio(
+                    e.target.value
+                  )
                 }
+                maxLength={300}
                 placeholder="Tell people about yourself..."
-                rows={4}
-                maxLength={160}
               />
-
-              <small>
-                {bio.length}/160
-              </small>
 
             </label>
 
-            <button
-              className="save-profile"
-              onClick={saveProfile}
-              disabled={saving}
-            >
-              {saving
-                ? "Saving..."
-                : "Save changes"}
-            </button>
+
+            <div className="profile-edit-actions">
+
+              <button
+                className="cancel-profile-button"
+                onClick={closeEdit}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="save-profile-button"
+                onClick={saveProfile}
+                disabled={saving}
+              >
+                {saving
+                  ? "Saving..."
+                  : "Save changes"}
+              </button>
+
+            </div>
 
           </div>
 
         </div>
 
       )}
+
+
+      {/* POST VIEWER */}
+
+      {selectedPost && (
+
+        <div
+          className="post-viewer-overlay"
+          onClick={() =>
+            setSelectedPost(null)
+          }
+        >
+
+          <div
+            className="post-viewer"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <button
+              className="post-viewer-close"
+              onClick={() =>
+                setSelectedPost(null)
+              }
+            >
+              <X size={24} />
+            </button>
+
+            {selectedPost.media_url ? (
+              <img
+                src={
+                  selectedPost.media_url
+                }
+                alt={
+                  selectedPost.caption ||
+                  "Post"
+                }
+              />
+            ) : (
+              <div className="post-viewer-text">
+                {
+                  selectedPost.caption
+                }
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      )}
+
+
+      {/* MOBILE NAV */}
+
+      <nav className="mobile-bottom-nav profile-mobile-nav">
+
+        <Link href="/">
+          <Grid3X3 size={22} />
+        </Link>
+
+        <Link href="/explore">
+          <User size={22} />
+        </Link>
+
+        <button onClick={openEdit}>
+          <Settings size={22} />
+        </button>
+
+      </nav>
 
     </main>
   );
