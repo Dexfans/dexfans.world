@@ -1,482 +1,400 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-const API = "https://dexfans-api.dwf6zb4bd.workers.dev";
+const API =
+  "https://dexfans-api.dwf6zb4bd.workers.dev";
 
 type User = {
   id: number;
   username: string;
   display_name: string;
-  bio: string;
+  bio?: string;
   avatar_url?: string;
   email?: string;
+  posts_count?: number;
+  followers_count?: number;
+  following_count?: number;
+};
+
+type Post = {
+  id: number;
+  user_id: number;
+  caption: string;
+  media_url?: string;
+  created_at: string;
+  username: string;
+  display_name: string;
+  avatar_url?: string;
 };
 
 export default function ProfilePage() {
+  const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
-
-  const [username, setUsername] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [bio, setBio] = useState("");
-
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [caption, setCaption] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [posting, setPosting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const savedUser = localStorage.getItem("dexfans_user");
 
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-
-        if (parsedUser?.username) {
-          setUser(parsedUser);
-        }
-      } catch {
-        localStorage.removeItem("dexfans_user");
-      }
+    if (!savedUser) {
+      router.push("/login");
+      return;
     }
-  }, []);
-
-  async function createProfile(e: React.FormEvent) {
-    e.preventDefault();
-
-    setLoading(true);
-    setMessage("");
 
     try {
-      const response = await fetch(`${API}/api/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username.trim().toLowerCase(),
-          displayName: displayName.trim(),
-          bio: bio.trim(),
-        }),
-      });
+      const parsedUser = JSON.parse(savedUser);
+      setUser(parsedUser);
+      loadPosts(parsedUser.id);
+    } catch {
+      localStorage.removeItem("dexfans_user");
+      router.push("/login");
+    }
+  }, [router]);
+
+  async function loadPosts(userId: number) {
+    try {
+      const response = await fetch(
+        `${API}/api/posts?user_id=${userId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Could not load posts");
+      }
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        setMessage(
-          `❌ ${data.error || "Could not create profile."}`
-        );
-        return;
+      if (data.success) {
+        setPosts(data.posts || []);
       }
-
-      // Save the real user returned by D1
-      localStorage.setItem(
-        "dexfans_user",
-        JSON.stringify(data.user)
-      );
-
-      // Immediately switch to profile view
-      setUser(data.user);
-
-      setMessage("");
-
-      setUsername("");
-      setDisplayName("");
-      setBio("");
-
-    } catch (error) {
-      setMessage("❌ Could not connect to DexFans API.");
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
   }
 
-  function logout() {
-    localStorage.removeItem("dexfans_user");
-    setUser(null);
+  async function createPost(e: FormEvent) {
+    e.preventDefault();
+
+    if (!user) return;
+
+    setError("");
+
+    if (!caption.trim() && !mediaUrl.trim()) {
+      setError("Write something or add media.");
+      return;
+    }
+
+    setPosting(true);
+
+    try {
+      const response = await fetch(
+        `${API}/api/posts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            caption: caption.trim(),
+            mediaUrl: mediaUrl.trim(),
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.error || "Could not create post"
+        );
+      }
+
+      setPosts((current) => [
+        data.post,
+        ...current,
+      ]);
+
+      setCaption("");
+      setMediaUrl("");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not create post"
+      );
+    } finally {
+      setPosting(false);
+    }
   }
 
-  // =========================================
-  // REAL PROFILE
-  // =========================================
+  function logout() {
+    localStorage.removeItem("dexfans_user");
+    router.push("/login");
+  }
 
-  if (user) {
+  if (loading) {
     return (
-      <main
-        style={{
-          minHeight: "100vh",
-          background: "#000",
-          color: "#fff",
-          padding: "30px 20px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "700px",
-            margin: "0 auto",
-          }}
-        >
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "40px",
-            }}
-          >
-
-            <Link
-              href="/"
-              style={{
-                color: "#999",
-                textDecoration: "none",
-              }}
-            >
-              ← DexFans
-            </Link>
-
-            <button
-              onClick={logout}
-              style={{
-                background: "#151515",
-                color: "#fff",
-                border: "1px solid #333",
-                borderRadius: "10px",
-                padding: "10px 16px",
-                cursor: "pointer",
-              }}
-            >
-              Logout
-            </button>
-
-          </div>
-
-          <div
-            style={{
-              background: "#0b0b0b",
-              border: "1px solid #292929",
-              borderRadius: "20px",
-              padding: "35px",
-            }}
-          >
-
-            {/* AVATAR */}
-
-            <div
-              style={{
-                width: "110px",
-                height: "110px",
-                borderRadius: "50%",
-                background:
-                  "linear-gradient(135deg,#ff006e,#8338ec,#0095f6)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "42px",
-                fontWeight: "800",
-                marginBottom: "25px",
-              }}
-            >
-              {user.username
-                ? user.username.charAt(0).toUpperCase()
-                : "D"}
-            </div>
-
-            {/* NAME */}
-
-            <h1
-              style={{
-                fontSize: "32px",
-                margin: "0 0 5px",
-              }}
-            >
-              {user.display_name || user.username}
-            </h1>
-
-            {/* USERNAME */}
-
-            <p
-              style={{
-                color: "#888",
-                fontSize: "16px",
-                margin: "0 0 25px",
-              }}
-            >
-              @{user.username}
-            </p>
-
-            {/* BIO */}
-
-            <p
-              style={{
-                color: "#ccc",
-                fontSize: "16px",
-                lineHeight: "1.6",
-                marginBottom: "30px",
-              }}
-            >
-              {user.bio || "No bio yet."}
-            </p>
-
-            {/* STATS */}
-
-            <div
-              style={{
-                display: "flex",
-                gap: "40px",
-                borderTop: "1px solid #292929",
-                borderBottom: "1px solid #292929",
-                padding: "20px 0",
-                marginBottom: "30px",
-              }}
-            >
-
-              <div>
-                <strong style={{ fontSize: "20px" }}>
-                  0
-                </strong>
-
-                <div style={{ color: "#777" }}>
-                  Posts
-                </div>
-              </div>
-
-              <div>
-                <strong style={{ fontSize: "20px" }}>
-                  0
-                </strong>
-
-                <div style={{ color: "#777" }}>
-                  Followers
-                </div>
-              </div>
-
-              <div>
-                <strong style={{ fontSize: "20px" }}>
-                  0
-                </strong>
-
-                <div style={{ color: "#777" }}>
-                  Following
-                </div>
-              </div>
-
-            </div>
-
-            {/* POSTS */}
-
-            <div>
-
-              <h2
-                style={{
-                  fontSize: "20px",
-                  marginBottom: "15px",
-                }}
-              >
-                Posts
-              </h2>
-
-              <div
-                style={{
-                  background: "#111",
-                  borderRadius: "12px",
-                  padding: "35px",
-                  textAlign: "center",
-                  color: "#666",
-                }}
-              >
-                No posts yet.
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-gray-400">
+          Loading profile...
+        </p>
       </main>
     );
   }
 
-  // =========================================
-  // CREATE PROFILE
-  // =========================================
+  if (!user) {
+    return null;
+  }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#000",
-        color: "#fff",
-        padding: "30px 20px",
-      }}
-    >
+    <main className="min-h-screen bg-black text-white">
 
-      <div
-        style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-        }}
-      >
+      {/* TOP BAR */}
+      <header className="border-b border-zinc-800">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        <Link
-          href="/"
-          style={{
-            color: "#999",
-            textDecoration: "none",
-            fontSize: "14px",
-          }}
-        >
-          ← DexFans
-        </Link>
-
-        <div
-          style={{
-            marginTop: "50px",
-            background: "#0b0b0b",
-            border: "1px solid #292929",
-            borderRadius: "20px",
-            padding: "30px",
-          }}
-        >
-
-          <div
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              background:
-                "linear-gradient(135deg,#ff006e,#8338ec,#0095f6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "40px",
-              fontWeight: "800",
-              marginBottom: "25px",
-            }}
+          <button
+            onClick={() => router.push("/")}
+            className="font-bold text-xl"
           >
-            {username
-              ? username.charAt(0).toUpperCase()
-              : "D"}
+            DexFans
+          </button>
+
+          <button
+            onClick={logout}
+            className="text-sm text-gray-400 hover:text-white"
+          >
+            Logout
+          </button>
+
+        </div>
+      </header>
+
+      {/* PROFILE */}
+      <section className="max-w-3xl mx-auto px-6 pt-10">
+
+        <div className="flex items-center gap-6">
+
+          {/* AVATAR */}
+          <div className="w-24 h-24 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-3xl font-bold">
+            {user.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={user.username}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              user.username
+                .charAt(0)
+                .toUpperCase()
+            )}
           </div>
 
-          <h1
-            style={{
-              fontSize: "28px",
-              marginBottom: "8px",
-            }}
-          >
-            Create your DexFans profile
-          </h1>
+          {/* USER INFO */}
+          <div className="flex-1">
 
-          <p
-            style={{
-              color: "#888",
-              marginBottom: "30px",
-            }}
-          >
-            Create your identity on DexFans.
-          </p>
+            <div className="flex items-center gap-4">
 
-          <form
-            onSubmit={createProfile}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "15px",
-            }}
-          >
+              <h1 className="text-2xl font-semibold">
+                {user.display_name ||
+                  user.username}
+              </h1>
 
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) =>
-                setUsername(
-                  e.target.value
-                    .toLowerCase()
-                    .replace(/[^a-z0-9_]/g, "")
-                )
-              }
-              required
-              minLength={3}
-              style={inputStyle}
-            />
+              <button
+                className="border border-zinc-700 rounded-lg px-4 py-2 text-sm hover:bg-zinc-900"
+              >
+                Edit Profile
+              </button>
 
-            <input
-              type="text"
-              placeholder="Display name"
-              value={displayName}
-              onChange={(e) =>
-                setDisplayName(e.target.value)
-              }
-              style={inputStyle}
-            />
-
-            <textarea
-              placeholder="Tell people about yourself..."
-              value={bio}
-              onChange={(e) =>
-                setBio(e.target.value)
-              }
-              rows={5}
-              style={{
-                ...inputStyle,
-                resize: "vertical",
-              }}
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                background: "#0095f6",
-                color: "#fff",
-                border: "none",
-                borderRadius: "10px",
-                padding: "15px",
-                fontSize: "16px",
-                fontWeight: "700",
-                cursor: "pointer",
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              {loading
-                ? "Creating profile..."
-                : "Create profile"}
-            </button>
-
-          </form>
-
-          {message && (
-            <div
-              style={{
-                marginTop: "20px",
-                padding: "15px",
-                background: "#151515",
-                borderRadius: "10px",
-                color: "#fff",
-              }}
-            >
-              {message}
             </div>
-          )}
+
+            <p className="text-gray-400 mt-1">
+              @{user.username}
+            </p>
+
+            <p className="text-gray-300 mt-3">
+              {user.bio || "No bio yet."}
+            </p>
+
+          </div>
 
         </div>
 
-      </div>
+        {/* STATS */}
+        <div className="flex gap-8 mt-8 border-y border-zinc-800 py-5">
+
+          <div>
+            <strong>{posts.length}</strong>{" "}
+            <span className="text-gray-400">
+              Posts
+            </span>
+          </div>
+
+          <div>
+            <strong>
+              {user.followers_count || 0}
+            </strong>{" "}
+            <span className="text-gray-400">
+              Followers
+            </span>
+          </div>
+
+          <div>
+            <strong>
+              {user.following_count || 0}
+            </strong>{" "}
+            <span className="text-gray-400">
+              Following
+            </span>
+          </div>
+
+        </div>
+
+        {/* CREATE POST */}
+        <section className="mt-8">
+
+          <h2 className="text-lg font-semibold mb-4">
+            Create a post
+          </h2>
+
+          <form
+            onSubmit={createPost}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"
+          >
+
+            <textarea
+              value={caption}
+              onChange={(e) =>
+                setCaption(e.target.value)
+              }
+              placeholder="What's happening?"
+              rows={4}
+              className="w-full bg-black border border-zinc-700 rounded-xl p-4 outline-none resize-none focus:border-white"
+            />
+
+            <input
+              type="text"
+              value={mediaUrl}
+              onChange={(e) =>
+                setMediaUrl(e.target.value)
+              }
+              placeholder="Media URL (optional)"
+              className="w-full mt-3 bg-black border border-zinc-700 rounded-xl px-4 py-3 outline-none focus:border-white"
+            />
+
+            {error && (
+              <div className="mt-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-end mt-4">
+
+              <button
+                type="submit"
+                disabled={posting}
+                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-gray-200 disabled:opacity-50"
+              >
+                {posting
+                  ? "Posting..."
+                  : "Post"}
+              </button>
+
+            </div>
+
+          </form>
+
+        </section>
+
+        {/* POSTS */}
+        <section className="mt-10 pb-20">
+
+          <h2 className="text-lg font-semibold mb-5">
+            Posts
+          </h2>
+
+          {posts.length === 0 ? (
+            <div className="border border-zinc-800 rounded-2xl p-10 text-center text-gray-500">
+              No posts yet.
+            </div>
+          ) : (
+            <div className="space-y-5">
+
+              {posts.map((post) => (
+                <article
+                  key={post.id}
+                  className="border border-zinc-800 rounded-2xl overflow-hidden"
+                >
+
+                  {/* POST HEADER */}
+                  <div className="p-4 flex items-center gap-3">
+
+                    <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center font-semibold">
+
+                      {post.avatar_url ? (
+                        <img
+                          src={post.avatar_url}
+                          alt={post.username}
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      ) : (
+                        post.username
+                          .charAt(0)
+                          .toUpperCase()
+                      )}
+
+                    </div>
+
+                    <div>
+                      <p className="font-medium">
+                        {post.display_name ||
+                          post.username}
+                      </p>
+
+                      <p className="text-xs text-gray-500">
+                        @{post.username}
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* MEDIA */}
+                  {post.media_url && (
+                    <img
+                      src={post.media_url}
+                      alt="Post media"
+                      className="w-full max-h-[700px] object-cover"
+                    />
+                  )}
+
+                  {/* CAPTION */}
+                  {post.caption && (
+                    <div className="p-5">
+                      <p className="text-gray-200 whitespace-pre-wrap">
+                        {post.caption}
+                      </p>
+                    </div>
+                  )}
+
+                </article>
+              ))}
+
+            </div>
+          )}
+
+        </section>
+
+      </section>
 
     </main>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  boxSizing: "border-box" as const,
-  background: "#151515",
-  color: "#fff",
-  border: "1px solid #333",
-  borderRadius: "10px",
-  padding: "15px",
-  fontSize: "15px",
-  outline: "none",
-};
