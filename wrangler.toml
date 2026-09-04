@@ -6,3 +6,7 @@ compatibility_date = "2026-09-02"
 binding = "DB"
 database_name = "dexfans-db"
 database_id = "0a0b67b9-b489-499a-b2e6-3388bc070cd7"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "dexfans-media"
