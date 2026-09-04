@@ -1,295 +1,178 @@
-```javascript
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const path = url.pathname;
+    const method = request.method;
 
-    // --------------------------------------------------
-    // CORS / PREFLIGHT
-    // --------------------------------------------------
-
-    if (request.method === "OPTIONS") {
+    if (method === "OPTIONS") {
       return new Response(null, {
         status: 204,
-        headers: corsHeaders(),
+        headers: CORS_HEADERS,
       });
     }
 
-    // --------------------------------------------------
-    // API ROOT
-    // --------------------------------------------------
-
-    if (url.pathname === "/" && request.method === "GET") {
-      return json({
-        success: true,
-        name: "DexFans API",
-        status: "online",
-        version: "2.1.0",
-      });
-    }
-
-    // --------------------------------------------------
-    // API STATUS
-    // --------------------------------------------------
-
-    if (url.pathname === "/api/status" && request.method === "GET") {
-      return json({
-        success: true,
-        api: "online",
-        database: env.DB ? "connected" : "not configured",
-        storage: env.MEDIA ? "connected" : "not configured",
-      });
-    }
-
-    // --------------------------------------------------
-    // SIGN UP
-    // POST /api/auth/signup
-    // --------------------------------------------------
-
-    if (
-      url.pathname === "/api/auth/signup" &&
-      request.method === "POST"
-    ) {
-      if (!env.DB) {
-        return json(
-          {
-            success: false,
-            error: "Database not connected",
-          },
-          500
-        );
+    try {
+      // --------------------------------
+      // ROOT
+      // --------------------------------
+      if (method === "GET" && path === "/") {
+        return json({
+          success: true,
+          name: "DexFans API",
+          status: "online",
+          version: "2.2.0",
+        });
       }
 
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json(
-          {
-            success: false,
-            error: "Invalid JSON",
-          },
-          400
-        );
+      // --------------------------------
+      // API STATUS
+      // --------------------------------
+      if (method === "GET" && path === "/api/status") {
+        return json({
+          success: true,
+          api: "online",
+          database: env.DB ? "connected" : "not configured",
+          storage: env.MEDIA ? "connected" : "not configured",
+        });
       }
 
-      const email = String(body.email || "")
-        .trim()
-        .toLowerCase();
+      // --------------------------------
+      // SIGN UP
+      // --------------------------------
+      if (method === "POST" && path === "/api/auth/signup") {
+        const body = await request.json();
 
-      const username = String(body.username || "")
-        .trim()
-        .toLowerCase();
+        const email = String(body.email || "").trim().toLowerCase();
+        const username = String(body.username || "").trim().toLowerCase();
+        const password = String(body.password || "");
 
-      const password = String(body.password || "");
+        if (!email || !username || !password) {
+          return json(
+            {
+              success: false,
+              error: "Email, username and password are required",
+            },
+            400
+          );
+        }
 
-      if (!email || !username || !password) {
-        return json(
-          {
-            success: false,
-            error: "Email, username and password are required",
-          },
-          400
-        );
-      }
+        if (password.length < 8) {
+          return json(
+            {
+              success: false,
+              error: "Password must be at least 8 characters",
+            },
+            400
+          );
+        }
 
-      if (!email.includes("@")) {
-        return json(
-          {
-            success: false,
-            error: "Please enter a valid email address",
-          },
-          400
-        );
-      }
+        if (!/^[a-z0-9_]{3,30}$/.test(username)) {
+          return json(
+            {
+              success: false,
+              error:
+                "Username must be 3-30 characters and contain only letters, numbers and underscores",
+            },
+            400
+          );
+        }
 
-      if (username.length < 3) {
-        return json(
-          {
-            success: false,
-            error: "Username must be at least 3 characters",
-          },
-          400
-        );
-      }
-
-      if (username.length > 30) {
-        return json(
-          {
-            success: false,
-            error: "Username must be 30 characters or less",
-          },
-          400
-        );
-      }
-
-      if (!/^[a-z0-9_]+$/.test(username)) {
-        return json(
-          {
-            success: false,
-            error:
-              "Username can only contain letters, numbers and underscores",
-          },
-          400
-        );
-      }
-
-      if (password.length < 8) {
-        return json(
-          {
-            success: false,
-            error: "Password must be at least 8 characters",
-          },
-          400
-        );
-      }
-
-      // Check email
-      const existingEmail = await env.DB
-        .prepare(
+        const existingEmail = await env.DB.prepare(
           "SELECT id FROM users WHERE email = ? LIMIT 1"
         )
-        .bind(email)
-        .first();
+          .bind(email)
+          .first();
 
-      if (existingEmail) {
-        return json(
-          {
-            success: false,
-            error: "Email is already registered",
-          },
-          400
-        );
-      }
+        if (existingEmail) {
+          return json(
+            {
+              success: false,
+              error: "Email is already registered",
+            },
+            409
+          );
+        }
 
-      // Check username
-      const existingUsername = await env.DB
-        .prepare(
+        const existingUsername = await env.DB.prepare(
           "SELECT id FROM users WHERE username = ? LIMIT 1"
         )
-        .bind(username)
-        .first();
+          .bind(username)
+          .first();
 
-      if (existingUsername) {
-        return json(
-          {
-            success: false,
-            error: "Username is already taken",
-          },
-          400
-        );
-      }
+        if (existingUsername) {
+          return json(
+            {
+              success: false,
+              error: "Username is already taken",
+            },
+            409
+          );
+        }
 
-      // Hash password
-      const passwordHash = await hashPassword(password);
+        const passwordHash = await hashPassword(password);
 
-      try {
-        const result = await env.DB
-          .prepare(`
-            INSERT INTO users
-            (
-              username,
-              display_name,
-              bio,
-              email,
-              password_hash,
-              created_at
-            )
-            VALUES (?, ?, ?, ?, ?, datetime('now'))
-          `)
+        const result = await env.DB.prepare(
+          `INSERT INTO users
+            (username, display_name, bio, avatar_url, email, password_hash)
+           VALUES (?, ?, ?, ?, ?, ?)`
+        )
           .bind(
             username,
             username,
+            "",
             "",
             email,
             passwordHash
           )
           .run();
 
-        const userId = result.meta.last_row_id;
+        const user = await env.DB.prepare(
+          `SELECT
+            id,
+            username,
+            display_name,
+            bio,
+            avatar_url,
+            email
+           FROM users
+           WHERE id = ?`
+        )
+          .bind(result.meta.last_row_id)
+          .first();
 
-        const user = {
-          id: userId,
-          username: username,
-          display_name: username,
-          bio: "",
-          avatar_url: null,
-          email: email,
-        };
-
-        return json(
-          {
-            success: true,
-            message: "Account created",
-            user: user,
-          },
-          201
-        );
-      } catch (error) {
-        console.error("SIGNUP ERROR:", error);
-
-        return json(
-          {
-            success: false,
-            error: "Could not create account",
-          },
-          500
-        );
-      }
-    }
-
-    // --------------------------------------------------
-    // LOGIN
-    // POST /api/auth/login
-    // --------------------------------------------------
-
-    if (
-      url.pathname === "/api/auth/login" &&
-      request.method === "POST"
-    ) {
-      if (!env.DB) {
-        return json(
-          {
-            success: false,
-            error: "Database not connected",
-          },
-          500
-        );
+        return json({
+          success: true,
+          user,
+        });
       }
 
-      let body;
+      // --------------------------------
+      // LOGIN
+      // --------------------------------
+      if (method === "POST" && path === "/api/auth/login") {
+        const body = await request.json();
 
-      try {
-        body = await request.json();
-      } catch {
-        return json(
-          {
-            success: false,
-            error: "Invalid JSON",
-          },
-          400
-        );
-      }
+        const email = String(body.email || "").trim().toLowerCase();
+        const password = String(body.password || "");
 
-      const email = String(body.email || "")
-        .trim()
-        .toLowerCase();
+        if (!email || !password) {
+          return json(
+            {
+              success: false,
+              error: "Email and password are required",
+            },
+            400
+          );
+        }
 
-      const password = String(body.password || "");
-
-      if (!email || !password) {
-        return json(
-          {
-            success: false,
-            error: "Email and password are required",
-          },
-          400
-        );
-      }
-
-      const user = await env.DB
-        .prepare(`
-          SELECT
+        const user = await env.DB.prepare(
+          `SELECT
             id,
             username,
             display_name,
@@ -297,326 +180,532 @@ export default {
             avatar_url,
             email,
             password_hash
-          FROM users
-          WHERE email = ?
-          LIMIT 1
-        `)
-        .bind(email)
-        .first();
+           FROM users
+           WHERE email = ?
+           LIMIT 1`
+        )
+          .bind(email)
+          .first();
 
-      if (!user) {
-        return json(
-          {
-            success: false,
-            error: "Invalid email or password",
-          },
-          401
-        );
+        if (!user) {
+          return json(
+            {
+              success: false,
+              error: "Invalid email or password",
+            },
+            401
+          );
+        }
+
+        const passwordHash = await hashPassword(password);
+
+        if (passwordHash !== user.password_hash) {
+          return json(
+            {
+              success: false,
+              error: "Invalid email or password",
+            },
+            401
+          );
+        }
+
+        delete user.password_hash;
+
+        return json({
+          success: true,
+          user,
+        });
       }
 
-      const validPassword = await verifyPassword(
-        password,
-        user.password_hash
-      );
+      // --------------------------------
+      // OLD USER CREATION ENDPOINT
+      // --------------------------------
+      if (method === "POST" && path === "/api/users") {
+        const body = await request.json();
 
-      if (!validPassword) {
-        return json(
-          {
-            success: false,
-            error: "Invalid email or password",
-          },
-          401
-        );
-      }
+        const username = String(body.username || "").trim().toLowerCase();
+        const displayName =
+          String(body.display_name || username).trim();
+        const bio = String(body.bio || "").trim();
+        const avatarUrl = String(body.avatar_url || "").trim();
 
-      return json({
-        success: true,
-        message: "Login successful",
-        user: {
-          id: user.id,
-          username: user.username,
-          display_name: user.display_name,
-          bio: user.bio || "",
-          avatar_url: user.avatar_url || null,
-          email: user.email,
-        },
-      });
-    }
+        if (!username) {
+          return json(
+            {
+              success: false,
+              error: "Username is required",
+            },
+            400
+          );
+        }
 
-    // --------------------------------------------------
-    // CREATE PROFILE
-    // POST /api/users
-    // --------------------------------------------------
-
-    if (
-      url.pathname === "/api/users" &&
-      request.method === "POST"
-    ) {
-      if (!env.DB) {
-        return json(
-          {
-            success: false,
-            error: "D1 database not connected",
-          },
-          500
-        );
-      }
-
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json(
-          {
-            success: false,
-            error: "Invalid JSON",
-          },
-          400
-        );
-      }
-
-      const username = String(body.username || "")
-        .trim()
-        .toLowerCase();
-
-      const displayName = String(
-        body.displayName || ""
-      ).trim();
-
-      const bio = String(body.bio || "").trim();
-
-      if (!username) {
-        return json(
-          {
-            success: false,
-            error: "Username is required",
-          },
-          400
-        );
-      }
-
-      if (username.length < 3) {
-        return json(
-          {
-            success: false,
-            error: "Username must be at least 3 characters",
-          },
-          400
-        );
-      }
-
-      if (username.length > 30) {
-        return json(
-          {
-            success: false,
-            error: "Username must be 30 characters or less",
-          },
-          400
-        );
-      }
-
-      if (!/^[a-z0-9_]+$/.test(username)) {
-        return json(
-          {
-            success: false,
-            error:
-              "Username can only contain letters, numbers and underscores",
-          },
-          400
-        );
-      }
-
-      const existingUsername = await env.DB
-        .prepare(
+        const existing = await env.DB.prepare(
           "SELECT id FROM users WHERE username = ? LIMIT 1"
         )
-        .bind(username)
-        .first();
+          .bind(username)
+          .first();
 
-      if (existingUsername) {
-        return json(
-          {
-            success: false,
-            error: "Username is already taken",
-          },
-          400
-        );
-      }
+        if (existing) {
+          return json(
+            {
+              success: false,
+              error: "Username already exists",
+            },
+            409
+          );
+        }
 
-      try {
-        const result = await env.DB
-          .prepare(`
-            INSERT INTO users
-            (
-              username,
-              display_name,
-              bio,
-              created_at
-            )
-            VALUES (?, ?, ?, datetime('now'))
-          `)
+        const result = await env.DB.prepare(
+          `INSERT INTO users
+            (username, display_name, bio, avatar_url)
+           VALUES (?, ?, ?, ?)`
+        )
           .bind(
             username,
-            displayName || username,
-            bio
+            displayName,
+            bio,
+            avatarUrl
           )
           .run();
 
-        const user = {
-          id: result.meta.last_row_id,
-          username: username,
-          display_name: displayName || username,
-          bio: bio,
-          avatar_url: null,
-        };
-
-        return json(
-          {
-            success: true,
-            message: "Profile created",
-            user: user,
-          },
-          201
-        );
-      } catch (error) {
-        console.error("PROFILE ERROR:", error);
-
-        return json(
-          {
-            success: false,
-            error: "Could not create profile",
-          },
-          500
-        );
-      }
-    }
-
-    // --------------------------------------------------
-    // GET USER PROFILE
-    // GET /api/users/:username
-    // --------------------------------------------------
-
-    if (
-      url.pathname.startsWith("/api/users/") &&
-      request.method === "GET"
-    ) {
-      if (!env.DB) {
-        return json(
-          {
-            success: false,
-            error: "D1 database not connected",
-          },
-          500
-        );
-      }
-
-      const username = decodeURIComponent(
-        url.pathname.replace("/api/users/", "")
-      )
-        .trim()
-        .toLowerCase();
-
-      if (!username) {
-        return json(
-          {
-            success: false,
-            error: "Username is required",
-          },
-          400
-        );
-      }
-
-      const user = await env.DB
-        .prepare(`
-          SELECT
+        const user = await env.DB.prepare(
+          `SELECT
             id,
             username,
             display_name,
             bio,
             avatar_url,
-            email,
-            created_at
-          FROM users
-          WHERE username = ?
-          LIMIT 1
-        `)
-        .bind(username)
-        .first();
+            email
+           FROM users
+           WHERE id = ?`
+        )
+          .bind(result.meta.last_row_id)
+          .first();
 
-      if (!user) {
-        return json(
-          {
-            success: false,
-            error: "User not found",
-          },
-          404
-        );
+        return json({
+          success: true,
+          user,
+        });
       }
 
-      return json({
-        success: true,
-        user: user,
-      });
-    }
+      // --------------------------------
+      // GET USER PROFILE
+      // --------------------------------
+      if (method === "GET" && path.startsWith("/api/users/")) {
+        const username = decodeURIComponent(
+          path.replace("/api/users/", "")
+        )
+          .trim()
+          .toLowerCase();
 
-    // --------------------------------------------------
-    // GET CREATORS
-    // GET /api/creators
-    // --------------------------------------------------
+        if (!username) {
+          return json(
+            {
+              success: false,
+              error: "Username is required",
+            },
+            400
+          );
+        }
 
-    if (
-      url.pathname === "/api/creators" &&
-      request.method === "GET"
-    ) {
-      if (!env.DB) {
-        return json(
-          {
-            success: false,
-            error: "D1 database not connected",
-          },
-          500
-        );
-      }
-
-      const result = await env.DB
-        .prepare(`
-          SELECT
+        const user = await env.DB.prepare(
+          `SELECT
             id,
             username,
             display_name,
             bio,
             avatar_url
-          FROM users
-          ORDER BY id DESC
-          LIMIT 50
-        `)
-        .all();
+           FROM users
+           WHERE username = ?
+           LIMIT 1`
+        )
+          .bind(username)
+          .first();
 
-      return json({
-        success: true,
-        creators: result.results || [],
-      });
+        if (!user) {
+          return json(
+            {
+              success: false,
+              error: "User not found",
+            },
+            404
+          );
+        }
+
+        const postsCount = await env.DB.prepare(
+          "SELECT COUNT(*) AS count FROM posts WHERE user_id = ?"
+        )
+          .bind(user.id)
+          .first();
+
+        const followersCount = await env.DB.prepare(
+          "SELECT COUNT(*) AS count FROM followers WHERE following_id = ?"
+        )
+          .bind(user.id)
+          .first();
+
+        const followingCount = await env.DB.prepare(
+          "SELECT COUNT(*) AS count FROM followers WHERE follower_id = ?"
+        )
+          .bind(user.id)
+          .first();
+
+        return json({
+          success: true,
+          user: {
+            ...user,
+            posts_count: Number(postsCount?.count || 0),
+            followers_count: Number(
+              followersCount?.count || 0
+            ),
+            following_count: Number(
+              followingCount?.count || 0
+            ),
+          },
+        });
+      }
+
+      // --------------------------------
+      // CREATORS
+      // --------------------------------
+      if (method === "GET" && path === "/api/creators") {
+        const result = await env.DB.prepare(
+          `SELECT
+            id,
+            username,
+            display_name,
+            bio,
+            avatar_url
+           FROM users
+           ORDER BY id DESC
+           LIMIT 50`
+        ).all();
+
+        return json({
+          success: true,
+          creators: result.results || [],
+        });
+      }
+
+      // --------------------------------
+      // CREATE POST
+      // --------------------------------
+      if (method === "POST" && path === "/api/posts") {
+        const body = await request.json();
+
+        const userId = Number(body.userId);
+        const caption = String(body.caption || "").trim();
+        const mediaUrl = String(body.mediaUrl || "").trim();
+
+        if (!userId || Number.isNaN(userId)) {
+          return json(
+            {
+              success: false,
+              error: "Valid userId is required",
+            },
+            400
+          );
+        }
+
+        if (!caption && !mediaUrl) {
+          return json(
+            {
+              success: false,
+              error: "Post must contain a caption or media",
+            },
+            400
+          );
+        }
+
+        const user = await env.DB.prepare(
+          "SELECT id, username, display_name, avatar_url FROM users WHERE id = ? LIMIT 1"
+        )
+          .bind(userId)
+          .first();
+
+        if (!user) {
+          return json(
+            {
+              success: false,
+              error: "User not found",
+            },
+            404
+          );
+        }
+
+        const result = await env.DB.prepare(
+          `INSERT INTO posts
+            (user_id, caption, media_url, created_at)
+           VALUES (?, ?, ?, ?)`
+        )
+          .bind(
+            userId,
+            caption,
+            mediaUrl,
+            new Date().toISOString()
+          )
+          .run();
+
+        const post = await env.DB.prepare(
+          `SELECT
+            posts.id,
+            posts.user_id,
+            posts.caption,
+            posts.media_url,
+            posts.created_at,
+            users.username,
+            users.display_name,
+            users.avatar_url
+           FROM posts
+           JOIN users ON users.id = posts.user_id
+           WHERE posts.id = ?`
+        )
+          .bind(result.meta.last_row_id)
+          .first();
+
+        return json({
+          success: true,
+          post,
+        });
+      }
+
+      // --------------------------------
+      // GET POSTS
+      // --------------------------------
+      if (method === "GET" && path === "/api/posts") {
+        const userId = url.searchParams.get("user_id");
+
+        let result;
+
+        if (userId) {
+          result = await env.DB.prepare(
+            `SELECT
+              posts.id,
+              posts.user_id,
+              posts.caption,
+              posts.media_url,
+              posts.created_at,
+              users.username,
+              users.display_name,
+              users.avatar_url
+             FROM posts
+             JOIN users ON users.id = posts.user_id
+             WHERE posts.user_id = ?
+             ORDER BY posts.id DESC
+             LIMIT 50`
+          )
+            .bind(Number(userId))
+            .all();
+        } else {
+          result = await env.DB.prepare(
+            `SELECT
+              posts.id,
+              posts.user_id,
+              posts.caption,
+              posts.media_url,
+              posts.created_at,
+              users.username,
+              users.display_name,
+              users.avatar_url
+             FROM posts
+             JOIN users ON users.id = posts.user_id
+             ORDER BY posts.id DESC
+             LIMIT 50`
+          ).all();
+        }
+
+        return json({
+          success: true,
+          posts: result.results || [],
+        });
+      }
+
+      // --------------------------------
+      // LIKE POST
+      // --------------------------------
+      if (
+        method === "POST" &&
+        path.match(/^\/api\/posts\/[0-9]+\/like$/)
+      ) {
+        const postId = Number(
+          path.split("/")[3]
+        );
+
+        const body = await request.json();
+        const userId = Number(body.userId);
+
+        if (!userId || !postId) {
+          return json(
+            {
+              success: false,
+              error: "userId and postId are required",
+            },
+            400
+          );
+        }
+
+        const existing = await env.DB.prepare(
+          "SELECT id FROM likes WHERE user_id = ? AND post_id = ? LIMIT 1"
+        )
+          .bind(userId, postId)
+          .first();
+
+        if (existing) {
+          await env.DB.prepare(
+            "DELETE FROM likes WHERE user_id = ? AND post_id = ?"
+          )
+            .bind(userId, postId)
+            .run();
+
+          return json({
+            success: true,
+            liked: false,
+          });
+        }
+
+        await env.DB.prepare(
+          `INSERT INTO likes
+            (user_id, post_id)
+           VALUES (?, ?)`
+        )
+          .bind(userId, postId)
+          .run();
+
+        return json({
+          success: true,
+          liked: true,
+        });
+      }
+
+      // --------------------------------
+      // COMMENTS
+      // --------------------------------
+      if (
+        method === "POST" &&
+        path.match(/^\/api\/posts\/[0-9]+\/comments$/)
+      ) {
+        const postId = Number(
+          path.split("/")[3]
+        );
+
+        const body = await request.json();
+
+        const userId = Number(body.userId);
+        const text = String(body.text || "").trim();
+
+        if (!userId || !postId || !text) {
+          return json(
+            {
+              success: false,
+              error: "userId, postId and text are required",
+            },
+            400
+          );
+        }
+
+        const user = await env.DB.prepare(
+          "SELECT id FROM users WHERE id = ? LIMIT 1"
+        )
+          .bind(userId)
+          .first();
+
+        if (!user) {
+          return json(
+            {
+              success: false,
+              error: "User not found",
+            },
+            404
+          );
+        }
+
+        const result = await env.DB.prepare(
+          `INSERT INTO comments
+            (user_id, post_id, comment, created_at)
+           VALUES (?, ?, ?, ?)`
+        )
+          .bind(
+            userId,
+            postId,
+            text,
+            new Date().toISOString()
+          )
+          .run();
+
+        return json({
+          success: true,
+          comment: {
+            id: result.meta.last_row_id,
+            user_id: userId,
+            post_id: postId,
+            comment: text,
+          },
+        });
+      }
+
+      // --------------------------------
+      // GET COMMENTS
+      // --------------------------------
+      if (
+        method === "GET" &&
+        path.match(/^\/api\/posts\/[0-9]+\/comments$/)
+      ) {
+        const postId = Number(
+          path.split("/")[3]
+        );
+
+        const result = await env.DB.prepare(
+          `SELECT
+            comments.id,
+            comments.user_id,
+            comments.post_id,
+            comments.comment,
+            comments.created_at,
+            users.username,
+            users.display_name,
+            users.avatar_url
+           FROM comments
+           JOIN users ON users.id = comments.user_id
+           WHERE comments.post_id = ?
+           ORDER BY comments.id ASC`
+        )
+          .bind(postId)
+          .all();
+
+        return json({
+          success: true,
+          comments: result.results || [],
+        });
+      }
+
+      return json(
+        {
+          success: false,
+          error: "Route not found",
+          path,
+        },
+        404
+      );
+    } catch (error) {
+      console.error(error);
+
+      return json(
+        {
+          success: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Internal server error",
+        },
+        500
+      );
     }
-
-    // --------------------------------------------------
-    // UNKNOWN ROUTE
-    // --------------------------------------------------
-
-    return json(
-      {
-        success: false,
-        error: "Endpoint not found",
-        path: url.pathname,
-      },
-      404
-    );
   },
 };
 
-// --------------------------------------------------
-// PASSWORD HASHING
-// --------------------------------------------------
+// --------------------------------
+// PASSWORD HASH
+// --------------------------------
 
 async function hashPassword(password) {
   const data = new TextEncoder().encode(password);
@@ -626,57 +715,26 @@ async function hashPassword(password) {
     data
   );
 
-  return arrayBufferToHex(hash);
-}
-
-async function verifyPassword(password, storedHash) {
-  if (!storedHash) {
-    return false;
-  }
-
-  const hash = await hashPassword(password);
-
-  return hash === storedHash;
-}
-
-function arrayBufferToHex(buffer) {
-  return [...new Uint8Array(buffer)]
+  return [...new Uint8Array(hash)]
     .map((byte) =>
       byte.toString(16).padStart(2, "0")
     )
     .join("");
 }
 
-// --------------------------------------------------
-// CORS
-// --------------------------------------------------
-
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods":
-      "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers":
-      "Content-Type, Authorization",
-    "Access-Control-Max-Age":
-      "86400",
-  };
-}
-
-// --------------------------------------------------
+// --------------------------------
 // JSON RESPONSE
-// --------------------------------------------------
+// --------------------------------
 
 function json(data, status = 200) {
   return new Response(
     JSON.stringify(data),
     {
-      status: status,
+      status,
       headers: {
+        ...CORS_HEADERS,
         "Content-Type": "application/json",
-        ...corsHeaders(),
       },
     }
   );
 }
-```
