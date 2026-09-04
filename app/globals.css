@@ -623,3 +623,472 @@ a {
     height: 38px;
   }
 }
+/* =========================
+   CREATOR PROFILE
+========================= */
+
+.creator-profile-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+.creator-topbar {
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #202020;
+  padding: 0 15px;
+  position: sticky;
+  top: 0;
+  background: rgba(0,0,0,.94);
+  backdrop-filter: blur(15px);
+  z-index: 20;
+}
+
+.creator-topbar > strong {
+  font-size: 16px;
+}
+
+.profile-back,
+.profile-top-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.profile-top-actions {
+  display: flex;
+  gap: 5px;
+}
+
+/* PROFILE HEADER */
+
+.creator-header {
+  padding: 42px 35px 30px;
+  border-bottom: 1px solid #202020;
+}
+
+.creator-main {
+  display: flex;
+  align-items: center;
+  gap: 38px;
+}
+
+.large-avatar {
+  width: 155px;
+  height: 155px;
+  padding: 4px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #ffcc33,
+    #ff2d75,
+    #9b2cff
+  );
+  flex-shrink: 0;
+}
+
+.large-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #000;
+}
+
+.creator-details {
+  min-width: 0;
+}
+
+.creator-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.creator-name-row h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.verified {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #3897f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.creator-username {
+  color: #aaa;
+  margin: 7px 0 13px;
+  font-size: 14px;
+}
+
+.creator-bio {
+  margin: 0;
+  color: #ddd;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 55px;
+  margin: 35px 0 22px;
+}
+
+.profile-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.profile-stats strong {
+  font-size: 17px;
+}
+
+.profile-stats span {
+  color: #888;
+  font-size: 13px;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-actions button {
+  height: 40px;
+  border-radius: 9px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.follow-button {
+  background: #fff;
+  color: #000;
+}
+
+.following-button {
+  background: #242424;
+  color: #fff;
+  border: 1px solid #3b3b3b;
+}
+
+.message-button {
+  background: #242424;
+}
+
+.live-button {
+  background: #ff304f;
+}
+
+/* TABS */
+
+.creator-tabs {
+  height: 58px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #202020;
+  gap: 70px;
+}
+
+.creator-tabs button {
+  min-width: 100px;
+  height: 100%;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-bottom: 2px solid transparent;
+  font-size: 12px;
+}
+
+.creator-tabs button.active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+/* GRID */
+
+.creator-post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  padding-top: 3px;
+}
+
+.creator-grid-post {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #111;
+  padding: 0;
+}
+
+.creator-grid-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.text-post {
+  width: 100%;
+  height: 100%;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 15px;
+}
+
+.grid-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.creator-grid-post:hover .grid-hover {
+  opacity: 1;
+}
+
+.grid-hover span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+/* MODAL */
+
+.profile-post-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+}
+
+.profile-post-window {
+  width: 100%;
+  max-width: 1000px;
+  max-height: 90vh;
+  background: #111;
+  border-radius: 14px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.3fr .7fr;
+  position: relative;
+}
+
+.close-post {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 5;
+  font-size: 32px;
+}
+
+.modal-post-image {
+  background: #000;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-post-image img {
+  width: 100%;
+  height: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.modal-text-post {
+  padding: 40px;
+  text-align: center;
+}
+
+.modal-post-info {
+  padding: 28px;
+}
+
+.modal-post-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #292929;
+}
+
+.modal-post-user img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.modal-post-info p {
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.modal-date {
+  color: #666;
+  font-size: 11px;
+}
+
+/* LOADING */
+
+.creator-profile-loading {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-spinner {
+  width: 35px;
+  height: 35px;
+  border: 3px solid #333;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: profile-spin .8s linear infinite;
+}
+
+@keyframes profile-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.creator-not-found {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.creator-not-found a {
+  color: #4aa3ff;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .creator-profile-page {
+    width: 100%;
+  }
+
+  .creator-header {
+    padding: 25px 15px 20px;
+  }
+
+  .creator-main {
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .large-avatar {
+    width: 92px;
+    height: 92px;
+  }
+
+  .creator-name-row h1 {
+    font-size: 19px;
+  }
+
+  .creator-bio {
+    font-size: 13px;
+  }
+
+  .profile-stats {
+    justify-content: space-around;
+    gap: 0;
+    margin: 25px 0 18px;
+  }
+
+  .profile-stats div {
+    align-items: center;
+  }
+
+  .profile-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-actions .live-button {
+    grid-column: span 2;
+  }
+
+  .creator-tabs {
+    gap: 15px;
+  }
+
+  .creator-tabs button {
+    min-width: 75px;
+  }
+
+  .creator-post-grid {
+    gap: 2px;
+  }
+
+  .profile-post-window {
+    display: block;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+
+  .modal-post-image {
+    min-height: auto;
+    max-height: 55vh;
+  }
+
+  .modal-post-image img {
+    max-height: 55vh;
+  }
+
+  .modal-post-info {
+    padding: 20px;
+  }
+}
